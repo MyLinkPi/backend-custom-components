@@ -2,10 +2,11 @@
   "name": "backend-custom-components",
   "version": "1.0.0",
   "description": "连接派后端组件",
-  "main": "env.js",
+  "main": "index.js",
   "scripts": {
     "build_demo": "esbuild demo.js --bundle --platform=node --target=node16 --minify --outdir=./dist --allow-overwrite",
     "build": "esbuild index.js --bundle --platform=node --target=node16 --minify --outdir=./dist --allow-overwrite",
+    "clean": "cross-env rm -rf dist.zip dist",
     "login": "node login.js",
     "pack": "node pack.js",
     "test_demo": "node test.js demo",
@@ -22,9 +23,10 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "ali-oss": "^6.21.0",
     "@mylinkpi/fabric": "^3.0.1-0",
+    "ali-oss": "^6.21.0",
     "archiver": "^7.0.1",
+    "cross-env": "^7.0.3",
     "esbuild": "^0.23.0",
     "prettier": "^3.3.3",
     "readline-sync": "^1.4.10"
