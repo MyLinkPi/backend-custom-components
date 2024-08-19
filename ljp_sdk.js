@@ -3,6 +3,7 @@ const { generateId, md5, IsTempId } = require('./util');
 const fs = require('node:fs');
 const path = require('node:path');
 const OSS = require('ali-oss');
+const axios = require('axios');
 
 /**
  * @class LJPNode
@@ -366,6 +367,20 @@ class SDK {
       if (ret2.data?.status !== 'ok') throw new Error('无法上传:' + ret2.data?.message);
       return { url: [ret2.data.data], name: [path.basename(file_name)] };
     }
+  }
+
+  request(req) {
+    const config = {};
+    if ('timeout' in req) config.timeout = req.timeout;
+    if ('headers' in req) config.headers = req.headers;
+    switch (req.method.toLowerCase()) {
+      case 'get':
+        return axios.get(req.uri, config).then((d) => d.data);
+      case 'post':
+      case 'put':
+        return axios[req.method.toLowerCase()](req.uri, req.body, config).then((d) => d.data);
+    }
+    return null;
   }
 }
 

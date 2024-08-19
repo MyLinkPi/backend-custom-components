@@ -146,9 +146,23 @@ export interface LJP_SDK {
   getPropIndexByName(temp_id: TEMP_ID, name: PROP_NAME): PROP_INDEX;
   getStatusIndexByName(temp_id: TEMP_ID, name: STATUS_NAME): STATUS_INDEX;
   updateVersion(): Promise<boolean>;
+
+  /**
+   * 文件上传暂时不能用
+   * @param node_id
+   * @param file_name
+   * @param data
+   */
   uploadFile(
     node_id: NODE_ID,
     file_name: string,
     data: Buffer | null | undefined,
   ): Promise<FILE_PROP>;
+
+  request(req: {
+    method: 'get' | 'put' | 'post';
+    timeout: number;
+    body: any;
+    headers: { [key: string]: string };
+  }): any;
 }
