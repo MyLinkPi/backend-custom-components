@@ -358,7 +358,11 @@ class SDK {
       });
       const upload_file = `${generateId()}.${path.basename(file_name).split('.').pop()}`;
       await oss_client.put(path.join(ret.data.prefix, 'upload', upload_file), file_data);
-      const ret2 = await ljp_req('/api/file/store', { node_id, path: upload_file });
+      const ret2 = await ljp_req('/api/file/store', {
+        org_id: this._org_id,
+        node_id,
+        path: upload_file,
+      });
       if (ret2.data?.status !== 'ok') throw new Error('无法上传:' + ret2.data?.message);
       return { url: [ret2.data.data], name: [path.basename(file_name)] };
     }
