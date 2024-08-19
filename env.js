@@ -4,4 +4,5 @@ module.exports = {
   TEST_ORG: '', // 填写测试ORG_ID
   DEMO_ORG: 'D3B7F181D7B5267DA56062643B0A84AE',
   LOGIN_FILE: path.join(__dirname, '.login'),
+  COMPONENT_ORG_ID: 'B76C8DA4F601AD9B46A62CF2D0E88892',
 };

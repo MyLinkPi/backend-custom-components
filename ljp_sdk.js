@@ -1,5 +1,8 @@
 const { ljp_req } = require('./request');
-const { generateId } = require('./util');
+const { generateId, md5, IsTempId } = require('./util');
+const fs = require('node:fs');
+const path = require('node:path');
+const OSS = require('ali-oss');
 
 /**
  * @class LJPNode
@@ -194,7 +197,7 @@ class LJPNode {
       }
     } else {
       for (const prop_name in prop) {
-        const i = this._sdk.getPropIndexByName(prop_name);
+        const i = this._sdk.getPropIndexByName(temp_info.temp_id, prop_name);
         this._assign_prop(ret, prop[prop_name], i);
       }
     }
@@ -226,7 +229,8 @@ class LJPNode {
               index:
                 typeof child.status_index === 'number'
                   ? child.status_index
-                  : this._sdk.getStatusIndexByName(child.status_index),
+                  : this._sdk.getStatusIndexByName(temp_info.temp_id, child.status_index),
+              prop: Array.isArray(child.status_prop) ? child.status_prop : [null, [], null, null],
             },
           },
         };
@@ -272,6 +276,11 @@ class SDK {
   async _update_temp_map() {
     const ret = await ljp_req('/api/getTempMap', { org_id: this._org_id });
     this._temp_map = ret.data.data;
+    for (const temp_info of Object.values(this._temp_map)) {
+      temp_info.org_id = temp_info.org_id.toUpperCase();
+      temp_info.temp_id = temp_info.temp_id.toUpperCase();
+      temp_info.creator = temp_info.creator.toUpperCase();
+    }
   }
 
   _convertNode(node) {
@@ -322,6 +331,37 @@ class SDK {
 
   async updateVersion() {
     return true;
+  }
+
+  async uploadFile(node_id, file_name, data = null) {
+    const file_length = Math.ceil((data ? data.length : fs.statSync(file_name).size) / 1024);
+    const file_data = data ? data : fs.readFileSync(file_name);
+    const md5sum = md5(file_data);
+    const ret = await ljp_req('/api/file/check_upload', {
+      org_id: this._org_id,
+      node_id,
+      file_length,
+      file_name: path.basename(file_name),
+      md5: md5sum,
+    });
+    if (ret.data?.status !== 'ok') throw new Error('无法上传:' + ret.data?.message);
+    if (ret.data.message === '已经上传') {
+      return { url: [ret.data.data], name: [path.basename(file_name)] };
+    } else {
+      const oss_client = new OSS({
+        region: ret.data.region,
+        bucket: ret.data.bucket,
+        authorizationV4: true,
+        stsToken: ret.data.token.SecurityToken,
+        accessKeyId: ret.data.token.AccessKeyId,
+        accessKeySecret: ret.data.token.AccessKeySecret,
+      });
+      const upload_file = `${generateId()}.${path.basename(file_name).split('.').pop()}`;
+      await oss_client.put(path.join(ret.data.prefix, 'upload', upload_file), file_data);
+      const ret2 = await ljp_req('/api/file/store', { node_id, path: upload_file });
+      if (ret2.data?.status !== 'ok') throw new Error('无法上传:' + ret2.data?.message);
+      return { url: [ret2.data.data], name: [path.basename(file_name)] };
+    }
   }
 }
 

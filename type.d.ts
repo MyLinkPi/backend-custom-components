@@ -146,4 +146,9 @@ export interface LJP_SDK {
   getPropIndexByName(temp_id: TEMP_ID, name: PROP_NAME): PROP_INDEX;
   getStatusIndexByName(temp_id: TEMP_ID, name: STATUS_NAME): STATUS_INDEX;
   updateVersion(): Promise<boolean>;
+  uploadFile(
+    node_id: NODE_ID,
+    file_name: string,
+    data: Buffer | null | undefined,
+  ): Promise<FILE_PROP>;
 }

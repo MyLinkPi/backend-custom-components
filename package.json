@@ -7,8 +7,10 @@
     "build_demo": "esbuild demo.js --bundle --platform=node --target=node16 --minify --outdir=./dist --allow-overwrite",
     "build": "esbuild index.js --bundle --platform=node --target=node16 --minify --outdir=./dist --allow-overwrite",
     "login": "node login.js",
+    "pack": "node pack.js",
     "test_demo": "node test.js demo",
-    "test": "node test.js"
+    "test": "node test.js",
+    "upload": "node upload.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,7 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "ali-oss": "^6.21.0",
     "@mylinkpi/fabric": "^3.0.1-0",
     "archiver": "^7.0.1",
     "esbuild": "^0.23.0",

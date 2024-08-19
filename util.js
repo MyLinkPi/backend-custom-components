@@ -20,4 +20,10 @@ function generateId(len = 16) {
   return buf.toString('hex');
 }
 
-module.exports = { IsNodeId, IsAccountId, IsAccountToken, IsTempId, sha512, generateId };
+function md5(a, encoding = 'hex') {
+  const hash = crypto.createHash('md5');
+  hash.update(a);
+  return hash.digest(encoding);
+}
+
+module.exports = { IsNodeId, IsAccountId, IsAccountToken, IsTempId, sha512, generateId, md5 };
