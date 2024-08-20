@@ -6,43 +6,57 @@ const captchaRegex = /^\d{6}$/;
 const emailRegex = /^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 
 async function main() {
-  const login_method = ['短信验证码登陆', '密码登陆'];
+  const lang = readline.keyInSelect(['english', 'chinese'], 'select language');
+  console.log(lang)
+  const en = lang === 0;
+  const login_method = en
+    ? ['short message(SMS) login', 'password login']
+    : ['短信验证码登陆', '密码登陆'];
   main: while (true) {
     try {
-      const index = readline.keyInSelect(login_method, '请选择登陆方式:');
+      const index = readline.keyInSelect(
+        login_method,
+        en ? 'select login method:' : '请选择登陆方式:',
+      );
       switch (index) {
         case -1:
           break main;
         case 0:
-          const phone = readline.question('请输入手机号：');
+          const phone = readline.question(en ? 'input phone number:' : '请输入手机号：');
           if (phoneRegex.test(phone)) {
             await sendCaptcha(phone);
             while (true) {
-              const captcha = readline.question('请输入验证码：');
+              const captcha = readline.question(
+                en ? 'input SMS verification code: ' : '请输入验证码：',
+              );
               if (captchaRegex.test(captcha)) {
                 try {
                   await captchaLogin(phone, captcha);
                   break main;
                 } catch (e) {}
               } else {
-                console.error('[ERROR] 错误的验证码\n');
+                console.error(en ? '[ERROR] wrong SMS code\n' : '[ERROR] 错误的验证码\n');
               }
             }
           } else {
-            console.error('[ERROR] 错误的手机号\n');
+            console.error(en ? '[ERROR] wrong phone number\n' : '[ERROR] 错误的手机号\n');
           }
           break;
         case 1:
-          const userName = readline.question('请输入帐号：');
+          const userName = readline.question(
+            en ? 'input account: (phone or nickname)' : '请输入帐号：',
+          );
           if (!emailRegex.test(userName) && !phoneRegex.test(userName)) {
-            console.error('[ERROR] 帐号错误\n');
+            console.error(en ? '[ERROR] wrong account\n' : '[ERROR] 帐号错误\n');
             break;
           }
-          const password = readline.question('请输入密码：', { hideEchoBack: true });
+          const password = readline.question(en ? 'input password: ' : '请输入密码：', {
+            hideEchoBack: true,
+          });
           await passwordLogin(userName, password);
           break main;
         default:
-          console.error('[ERROR] 请选择正确的登陆方式\n');
+          console.error(en ? '[ERROR] wrong login method\n' : '[ERROR] 请选择正确的登陆方式\n');
       }
     } catch (e) {
       console.error(`[ERROR] ${e.message}\n`);
