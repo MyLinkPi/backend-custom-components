@@ -18,8 +18,9 @@
     "url": "https://github.com/MyLinkPi/backend-custom-components.git"
   },
   "dependencies": {
-    "axios": "^1.7.4",
     "@mylinkpi/task_pool": "^1.0.1",
+    "axios": "^1.7.4",
+    "mocha": "^10.6.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

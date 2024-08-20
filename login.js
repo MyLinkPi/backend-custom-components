@@ -1,4 +1,12 @@
 const readline = require('readline-sync');
+readline.setDefaultOptions({
+  // print: function (display, encoding) {
+  //   console.log('encoding:',encoding);
+  //   process.stdout.write(display, 'utf8')
+  // }, // Remove ctrl-chars.
+  encoding:'utf8',
+  prompt: '>==> ',
+});
 const { sendCaptcha, captchaLogin, passwordLogin } = require('./request');
 
 const phoneRegex = /^1\d{10}$/;
@@ -7,7 +15,6 @@ const emailRegex = /^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)*@[a-zA-Z0-9_-]+(\.[a-zA-Z0
 
 async function main() {
   const lang = readline.keyInSelect(['english', 'chinese'], 'select language');
-  console.log(lang)
   const en = lang === 0;
   const login_method = en
     ? ['short message(SMS) login', 'password login']
