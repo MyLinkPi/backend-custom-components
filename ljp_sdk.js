@@ -142,6 +142,16 @@ class LJPNode {
     return ljp_req('/docapi/setAction', body).then((ret) => ret?.data?.status === 'ok');
   }
 
+  set_sys_prop(prop_name_list, value_list) {
+    const body = {
+      org_id: this.org_id,
+      node_id: this.node_id,
+      key: prop_name_list,
+      value: value_list,
+    };
+    return ljp_req('/docapi/node/modifySysProp', body).then((ret) => ret?.data?.status === 'ok');
+  }
+
   move_to(parent_id, sibling_id) {
     const body = {
       org_id: this.org_id,

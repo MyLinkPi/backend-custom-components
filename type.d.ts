@@ -105,6 +105,7 @@ export interface NODE {
   set_title(title: string): Promise<boolean>;
   set_prop(index: Array<PROP_INDEX | PROP_NAME>, value: Array<PROP>): Promise<boolean>;
   set_status_index(index: STATUS_INDEX | STATUS_NAME, prop: TEMP_STATUS_PROP): Promise<boolean>;
+  set_sys_prop(prop_name_list: Array<PROP_NAME>, value_list: Array<any>): Promise<boolean>;
   move_to(parent_id: NODE_ID, sibling_id: NODE_ID | null): Promise<boolean>;
   del(recycle: boolean): Promise<boolean>;
   insert_children(
