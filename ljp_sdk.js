@@ -356,6 +356,12 @@ class SDK {
         stsToken: ret.data.token.SecurityToken,
         accessKeyId: ret.data.token.AccessKeyId,
         accessKeySecret: ret.data.token.AccessKeySecret,
+        refreshSTSToken: () => ({
+          stsToken: ret.data.token.SecurityToken,
+          accessKeyId: ret.data.token.AccessKeyId,
+          accessKeySecret: ret.data.token.AccessKeySecret,
+        }),
+        refreshSTSTokenInterval: 60_000,
       });
       const upload_file = `${generateId()}.${path.basename(file_name).split('.').pop()}`;
       await oss_client.put(path.join(ret.data.prefix, 'upload', upload_file), file_data);
@@ -381,6 +387,28 @@ class SDK {
         return axios[req.method.toLowerCase()](req.uri, req.body, config).then((d) => d.data);
     }
     return null;
+  }
+
+  getTableInnerName(db_name, table_name) {
+    return ljp_req('/api/getTableName', {
+      org_id: this._org_id,
+      db_name,
+      table_name,
+    }).then((ret) => {
+      if (ret.data?.status === 'ok') return ret.data?.table_name ?? null;
+      throw new Error(ret.data?.message ?? '未知错误');
+    });
+  }
+
+  dbQuery(db_name, query) {
+    return ljp_req('/api/queryDb', {
+      org_id: this._org_id,
+      db_name,
+      query,
+    }).then((ret) => {
+      if (ret.data?.status === 'ok') return ret.data?.result ?? null;
+      throw new Error(ret.data?.message ?? '未知错误');
+    });
   }
 }
 

@@ -165,4 +165,7 @@ export interface LJP_SDK {
     body: any;
     headers: { [key: string]: string };
   }): any;
+
+  getTableInnerName(db_name: string, table_name: string): Promise<string | null>;
+  dbQuery(db_name: string, query: string): Promise<Array<any> | null>;
 }
