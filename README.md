@@ -13,7 +13,7 @@
 
 ## 1. 后端自定义组件介绍
 
-连接派零代码平台支持用户执行灵活的数据操作，通过sdk编写自定义组件，上传到连接派平台，可任意调用。
+连接派零代码平台支持用户执行灵活的数据操作，通过sdk编写自定义组件，上传到用户目标空间，可任意配置触发条件。
 组件示例：
 
 ```node
@@ -115,44 +115,117 @@ npm run pack
 npm run upload
 ```
 
-## 3. sdk功能一览
+上传成功后，可在空间的自动化配置中找到后端自定义组件类目，从中选择上传过的组件进行配置。（组件可见性：仅上传者的登录身份能够看到）
 
--
-    1. 依赖
-       sdk的工具函数定义在type.d.ts中, 在组件注释中引用类型可方便地进行开发
+## 4. 自定义组件配置和运行
+
+当成功上传到目标空间后，进入空间设置，在主题类型>选择主题>自动化操作 菜单中，可在指定的主题中配置触发条件 和要执行的组件。
+![img.png](img.png)
+
+
+## 5. SDK功能一览
+
+### 1. 依赖
+
+SDK的工具函数定义在 `type.d.ts` 中，在组件注释中引用类型可方便地进行开发。
 
 ```node
 /**
- * @param {LJP_SDK} ljp_sdk  //使用类型注释引用SDK类型定义，即可在开发中引用sdk提供的工具
+ * @param {LJP_SDK} ljp_sdk  // 使用类型注释引用SDK类型定义，即可在开发中引用sdk提供的工具
  */
 async function demo(ljp_sdk, task) {
-    //...
-}
+//...  
+}  
 ```
+### 2. 节点数据操作    
 
--
-    2. 数据操作
-
-1. 获取节点
-
+#### 2.0 示例：
 ```node
-const temp_node = await ljp_sdk.getTempNode('测试主题');
+//get node 通过节点ID或主题类型名称获取节点对象列表
+const nodes = await ljp_sdk.getNodes(['节点ID']);
+const nodes = await ljp_sdk.getTempNode('主题类型名称/主题类型id');
+const node = nodes[0];
+//node info 节点信息
+const org_id = node.org_id; // 获取节点所在组织ID
+const node_id = node.node_id; // 获取节点ID
+const title = node.title; // 获取节点标题
+const temp_id = node.temp_id; // 获取节点主题类型ID
+
+const r = await node.set_title('新标题'); // 设置节点标题
+
+//prop 属性
+const value = node.getPropByName('属性名称');// 获取属性值by属性名
+const propIndex = node.getPropIndexByName('属性名称');// 获取属性坐标
+
+const r = await node.set_prop([1, 3, 10], [v1, v2, v3]);//批量更新属性值 by prop index
+const r = await node.set_prop(['name1', 'name3', 'name10'], [v1, v2, v3]);//批量更新属性值 by prop name
+
+
+// //status 状态 暂不支持
+// const status_prop = node.status_prop; // 该主题的状态配置信息, 更新节点状态时需要传入该值
+// const status = node.status_prop; // 获取节点状态
+// const status_index = node.status_index; // 获取节点状态坐标
+// const status_index = node.getStatusIndexByName('status_name'); // 该状态名的坐标值status_index
+// const r = await node.set_status_index(status_index, status_prop); // 设置节点状态 by status index(数字)
+// const r = await node.set_status_index('status_name', status_prop); // 设置节点状态 by status name
+
+//message 消息
+const r = await node.send_message('消息内容'); // 在节点上发送消息
 ```
+以上修改操作者和消息发送者，都记录操作者身份，身份为组件开发者的登录身份。
 
-2. 获取节点属性列表
-3. 获取节点属性值
-4. 设置节点属性值
-
--
-    2. 任务操作
-
-## 4. 上传组件
-
--
-    1. 打包组件
-
--
-    2. 上传组件
-
--
-    3. 配置运行组件
+#### 2.1 获取节点    
+通过节点ID或主题类型名称获取节点对象列表。    
+```javascript  
+const nodes = await ljp_sdk.getNodes(['节点ID']);  
+const nodes = await ljp_sdk.getTempNode('主题类型名称/主题类型id');  
+```    
+#### 2.2 获取节点属性 
+通过属性名称获取节点属性的坐标，并读取属性值。    
+```javascript  
+const node = (await sdk.getNodes([nodeId]))[0];
+const propIndex = node.getPropIndexByName('属性名称');  // 获取属性坐标
+const value = node.getPropByName('属性名称');   // 获取属性值by属性名
+```    
+支持的属性类型：  - 文本类型  - 数字类型  - 附件类型  - 用户类型  - 日期类型  - 文本公式  - 引用类型  - 选值  - 多级选值  - 定位  - 地址  - 自增ID类型    
+#### 2.3 设置节点属性值    
+通过属性名称设置节点属性值。    
+```javascript  
+const node = (await sdk.getNodes([nodeId]))[0];
+node.set_prop('属性名称', '新的值');  
+n
+```    
+#### 2.4 节点状态 
+获取主题类型的状态坐标值。 更新到指定节点。（更改节点状态）
+```javascript  
+// 暂不支持
+// const node = (await sdk.getNodes([nodeId]))[0];
+//
+// const statusIndex = await sdk.getStatusIndexByName(tempId, '状态名称');
+// node.set_status_index(statusIndex);
+//
+// const statusIndex = await node.getStatusIndexByName('状态名称');
+// node.set_status_index(statusIndex);
+```    
+#### 2.5 在节点上发送消息    
+在指定节点上发送消息。    
+```javascript  
+const node = (await sdk.getNodes([nodeId]))[0];  
+const result = await node.send_message('消息内容');  
+```    
+### 3. 空间特殊操作    
+#### 3.1 获取空间根节点    
+获取空间根节点对象。    
+```javascript  
+const rootNode = await sdk.getRootNode();  
+```    
+#### 3.2 获取成员昵称映射    
+获取当前组织空间内成员ID和昵称的映射。    
+```javascript  
+const nicknameMap = await sdk.getNicknameMap();  
+```    
+#### 3.3 更新空间版本    
+更新空间版本，使前端同步数据。   
+```javascript  
+const result = await sdk.updateVersion();  
+```  
