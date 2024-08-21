@@ -65,6 +65,14 @@ export type STRING_PROP = string;
 export type NUMBER_PROP = number;
 export type FILE_PROP = { url: Array<string>; name: Array<string> };
 export type CASCADE_PROP = { id: Array<string>; tag: Array<string> };
+export type SYS_PROP_NAME =
+  | '_sys_ignore_children'
+  | '_sys_hideChildren'
+  | '_sys_protect'
+  | '_sys_readonly'
+  | '_sys_na_readonly'
+  | '_sys_statusonly'
+  | '_sys_na_statusonly';
 
 export type PROP =
   | STRING_PROP
@@ -109,7 +117,7 @@ export interface NODE {
   set_title(title: string): Promise<boolean>;
   set_prop(index: Array<PROP_INDEX | PROP_NAME>, value: Array<PROP>): Promise<boolean>;
   set_status_index(index: STATUS_INDEX | STATUS_NAME, prop: TEMP_STATUS_PROP): Promise<boolean>;
-  set_sys_prop(prop_name_list: Array<PROP_NAME>, value_list: Array<any>): Promise<boolean>;
+  set_sys_prop(prop_name_list: Array<SYS_PROP_NAME>, value_list: Array<any>): Promise<boolean>;
   move_to(parent_id: NODE_ID, sibling_id: NODE_ID | null): Promise<boolean>;
   del(recycle: boolean): Promise<boolean>;
   insert_children(
