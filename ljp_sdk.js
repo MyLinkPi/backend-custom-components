@@ -269,6 +269,10 @@ class LJPNode {
     };
     return ljp_req('/docapi/sendMessage', body).then((ret) => ret?.data?.status === 'ok');
   }
+
+  children() {
+    return this._sdk.getChildNodes(this.node_id);
+  }
 }
 
 /**
@@ -316,6 +320,16 @@ class SDK {
     const ret = await ljp_req('/docapi/getNodeNew', {
       org_id: this._org_id,
       node_id: node_id_list,
+    });
+    return ret.data.data.map(this._convertNode.bind(this));
+  }
+
+  async getChildNodes(parent_id ) {
+    const ret = await ljp_req('/docapi/getChildren', {
+      org_id: this._org_id,
+      node_id: parent_id,
+      self: false,
+      deep: 1,
     });
     return ret.data.data.map(this._convertNode.bind(this));
   }

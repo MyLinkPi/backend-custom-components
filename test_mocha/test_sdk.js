@@ -63,7 +63,10 @@ describe('node 节点数据读写', function () {
       const propIndex = node.getPropIndexByName('text'); // 获取属性坐标
       const r10 = await node.set_prop('text', 'test update text00'); // 更新属性值by属性名
       const r1 = await node.set_prop([5, 1], ['test update text11', new Date().getTime()]); //批量更新属性值 by prop index
-      const r2 = await node.set_prop(['text', 'date'], ['test update text22', new Date().getTime()]); //批量更新属性值 by prop name
+      const r2 = await node.set_prop(
+        ['text', 'date'],
+        ['test update text22', new Date().getTime()],
+      ); //批量更新属性值 by prop name
       //status 状态
       const status_prop = node.status_prop; // 该主题的状态配置信息, 更新节点状态时需要传入该值
       const status = node.status_prop; // 获取节点状态
@@ -153,5 +156,12 @@ describe('special function', () => {
   it('sdk.updateVersion() should update version 更新空间版本,让前端同步数据', async () => {
     const r = await sdk.updateVersion();
     assert(r === true);
+  });
+});
+describe('node tree 节点树操作', () => {
+  it('get child node: 获取子节点', async () => {
+    const nodes = await sdk.getChildNodes(spctestNodeId);
+    assert(nodes instanceof Array);
+    assert(nodes[0] instanceof Object);
   });
 });

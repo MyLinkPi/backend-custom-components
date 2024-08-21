@@ -119,6 +119,7 @@ export interface NODE {
   set_status_index(index: STATUS_INDEX | STATUS_NAME, prop: TEMP_STATUS_PROP): Promise<boolean>;
   set_sys_prop(prop_name_list: Array<SYS_PROP_NAME>, value_list: Array<any>): Promise<boolean>;
   move_to(parent_id: NODE_ID, sibling_id: NODE_ID | null): Promise<boolean>;
+  children(): Promise<Array<NODE>>;
   del(recycle: boolean): Promise<boolean>;
   insert_children(
     children: Array<{
@@ -160,6 +161,8 @@ export interface LJP_SDK {
   getPropIndexByName(temp_id: TEMP_ID, name: PROP_NAME): PROP_INDEX;
   getStatusIndexByName(temp_id: TEMP_ID, name: STATUS_NAME): STATUS_INDEX;
   updateVersion(): Promise<boolean>;
+
+  getChildren(node_id: NODE_ID): Promise<Array<NODE>>;
 
   /**
    * 文件上传暂时不能用
