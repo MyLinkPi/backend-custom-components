@@ -8,7 +8,8 @@ if (!fs.existsSync(upload_file_name)) {
   console.error('Package not found');
   process.exit(-1);
 }
-const 组件名称 = readline.question('请输入组件名称:');
+console.log('请输入组件名称:' );
+const 组件名称 = readline.question('');
 const sdk = new SDK(COMPONENT_ORG_ID);
 sdk.init().then(async () => {
   const ret = await (
@@ -36,4 +37,8 @@ sdk.init().then(async () => {
     console.log('上传成功');
     process.exit(0);
   }
+}).catch(e => {
+    console.error(e);
+    process.exit(1);
+
 });

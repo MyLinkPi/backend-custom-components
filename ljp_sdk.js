@@ -402,7 +402,7 @@ class SDK {
         refreshSTSTokenInterval: 60_000,
       });
       const upload_file = `${generateId()}.${path.basename(file_name).split('.').pop()}`;
-      await oss_client.put(path.join(ret.data.prefix, 'upload', upload_file), file_data);
+      await oss_client.put(path.join(ret.data.prefix, 'upload', upload_file).replace('\\','/'), file_data);
       const ret2 = await ljp_req('/api/file/store', {
         org_id: this._org_id,
         node_id,
