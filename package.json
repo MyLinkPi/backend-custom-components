@@ -21,6 +21,7 @@
     "@mylinkpi/task_pool": "^1.0.1",
     "axios": "^1.7.4",
     "mocha": "^10.6.0",
+    "quill-delta": "^4.2.2",
     "uuid": "^10.0.0"
   },
   "devDependencies": {

@@ -15,6 +15,7 @@ async function demo(ljp_sdk, task) {
     console.log(测试文本, 测试数字);
     await task_pool.push(node.set_prop('数字', 测试数字 + 1));
   }
+  await task_pool.push((await ljp_sdk.getNodes([task.n]))[0]?.send_message('喜加壹'));
   await Promise.all(task_pool);
   await ljp_sdk.updateVersion();
 }

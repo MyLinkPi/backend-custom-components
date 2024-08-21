@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const OSS = require('ali-oss');
 const axios = require('axios');
+const Delta = require('quill-delta');
 
 /**
  * @class LJPNode
@@ -254,6 +255,19 @@ class LJPNode {
       return await this._sdk.getNodes(node_id_list);
     }
     return [];
+  }
+
+  async send_message(message, no_auto = true) {
+    if (typeof message === 'string') {
+      message = new Delta().insert(message);
+    }
+    const body = {
+      org_id: this.org_id,
+      node_id: this.node_id,
+      message: { c: message },
+      no_auto: true,
+    };
+    return ljp_req('/docapi/sendMessage', body).then((ret) => ret?.data?.status === 'ok');
   }
 }
 

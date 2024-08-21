@@ -1,3 +1,5 @@
+import Delta = require('quill-delta');
+
 /**
  * @type ORG_ID
  * 空间ID
@@ -92,6 +94,8 @@ export type NODE_DATA = {
   };
 };
 
+export type MESSAGE = string | Delta;
+
 export interface NODE {
   constructor(sdk: LJP_SDK, node_data: NODE_DATA): any;
   get org_id(): ORG_ID;
@@ -120,6 +124,7 @@ export interface NODE {
   ): Promise<Array<NODE>>;
   getPropIndexByName(name: PROP_NAME): PROP_INDEX;
   getStatusIndexByName(name: STATUS_NAME): STATUS_INDEX;
+  send_message(message: MESSAGE, no_auto?: boolean): Promise<boolean>;
 }
 
 export type TEMP_MAP = { [key: TEMP_NAME | TEMP_ID]: TEMP_INFO };
