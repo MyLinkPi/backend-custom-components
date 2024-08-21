@@ -4,12 +4,24 @@
 
 ## 0. 目录
 
-- [1. 项目介绍](#1-项目介绍)
-- [2. sdk功能](#2-sdk功能)
-    - [1. 数据操作](#1-数据操作)
-    - [2. 任务操作](#2-任务操作)
-- [3. sdk使用](#3-sdk使用)
-- [4. 上传组件](#4-上传组件)
+- [1. 后端自定义组件介绍](#1-后端自定义组件介绍)
+- [2. sdk结构、功能](#2-sdk结构功能)
+- [3. 自定义组件开发过程](#3-自定义组件开发过程)
+- [4. 自定义组件配置和运行](#4-自定义组件配置和运行)
+- [5. SDK功能一览](#5-sdk功能一览)
+    - [1. 依赖](#1-依赖)
+    - [2. 节点数据操作](#2-节点数据操作)
+        - [2.0 示例：](#20-示例)
+        - [2.1 获取节点](#21-获取节点)
+        - [2.2 获取节点属性](#22-获取节点属性)
+        - [2.3 设置节点属性值](#23-设置节点属性值)
+        - [2.4 节点状态](#24-节点状态)
+        - [2.5 在节点上发送消息](#25-在节点上发送消息)
+    - [3. 空间特殊操作](#3-空间特殊操作)
+        - [3.1 获取空间根节点](#31-获取空间根节点)
+        - [3.2 获取成员昵称映射](#32-获取成员昵称映射)
+        - [3.3 更新空间版本](#33-更新空间版本)
+
 
 ## 1. 后端自定义组件介绍
 
@@ -137,9 +149,9 @@ async function demo(ljp_sdk, task) {
 //...  
 }  
 ```
-### 2. 节点数据操作    
+### 2. 节点数据操作
 
-#### 2.0 示例：
+#### 2.0 示例
 ```node
 //get node 通过节点ID或主题类型名称获取节点对象列表
 const nodes = await ljp_sdk.getNodes(['节点ID']);
@@ -174,13 +186,13 @@ const r = await node.send_message('消息内容'); // 在节点上发送消息
 ```
 以上修改操作者和消息发送者，都记录操作者身份，身份为组件开发者的登录身份。
 
-#### 2.1 获取节点    
+#### 2.1 获取节点:
 通过节点ID或主题类型名称获取节点对象列表。    
-```javascript  
+```javascript
 const nodes = await ljp_sdk.getNodes(['节点ID']);  
 const nodes = await ljp_sdk.getTempNode('主题类型名称/主题类型id');  
 ```    
-#### 2.2 获取节点属性 
+#### 2.2 获取节点属性
 通过属性名称获取节点属性的坐标，并读取属性值。    
 ```javascript  
 const node = (await sdk.getNodes([nodeId]))[0];
@@ -188,14 +200,14 @@ const propIndex = node.getPropIndexByName('属性名称');  // 获取属性坐�
 const value = node.getPropByName('属性名称');   // 获取属性值by属性名
 ```    
 支持的属性类型：  - 文本类型  - 数字类型  - 附件类型  - 用户类型  - 日期类型  - 文本公式  - 引用类型  - 选值  - 多级选值  - 定位  - 地址  - 自增ID类型    
-#### 2.3 设置节点属性值    
+#### 2.3 设置节点属性值
 通过属性名称设置节点属性值。    
-```javascript  
+```javascript
 const node = (await sdk.getNodes([nodeId]))[0];
 node.set_prop('属性名称', '新的值');  
 n
 ```    
-#### 2.4 节点状态 
+#### 2.4 节点状态
 获取主题类型的状态坐标值。 更新到指定节点。（更改节点状态）
 ```javascript  
 // 暂不支持
@@ -207,25 +219,25 @@ n
 // const statusIndex = await node.getStatusIndexByName('状态名称');
 // node.set_status_index(statusIndex);
 ```    
-#### 2.5 在节点上发送消息    
+#### 2.5 在节点上发送消息
 在指定节点上发送消息。    
 ```javascript  
 const node = (await sdk.getNodes([nodeId]))[0];  
 const result = await node.send_message('消息内容');  
 ```    
-### 3. 空间特殊操作    
-#### 3.1 获取空间根节点    
+### 3. 空间特殊操作
+#### 3.1 获取空间根节点
 获取空间根节点对象。    
 ```javascript  
 const rootNode = await sdk.getRootNode();  
 ```    
-#### 3.2 获取成员昵称映射    
+#### 3.2 获取成员昵称映射
 获取当前组织空间内成员ID和昵称的映射。    
 ```javascript  
 const nicknameMap = await sdk.getNicknameMap();  
 ```    
-#### 3.3 更新空间版本    
+#### 3.3 更新空间版本
 更新空间版本，使前端同步数据。   
-```javascript  
+```javascript
 const result = await sdk.updateVersion();  
 ```  
