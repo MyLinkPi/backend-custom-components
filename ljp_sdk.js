@@ -131,9 +131,9 @@ class LJPNode {
     const body = {
       org_id: this.org_id,
       temp_id: this.temp_id,
-      node: {
-        node_id: this.node_id,
-      },
+      node: [
+         this.node_id,
+      ],
       index,
       owner: prop[0] ?? null,
       user: prop[1] ?? [],

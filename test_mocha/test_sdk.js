@@ -13,13 +13,44 @@ switch (process.env.COMPUTERNAME) {
 let sdk = new SDK(org_id);
 const spctesttempId = '5FA69DF85ED411EF8E691070FD936D58'; // spc test temp
 const spctestNodeId = '86789eb4b3434519b50e3e5a9b49e7bc';
-
+let spcAd='BB5219CFB10011EEAB2D043F72FDCAE0';
 before(async function () {
   this.timeout(100_000);
   await sdk.init();
 });
 describe('temp', function () {});
 describe('node 节点数据读写', function () {
+  it('test all', async function () {
+    //get node 通过节点ID或主题类型名称获取节点对象列表
+    let ljp_sdk = sdk;
+    const nodes = await ljp_sdk.getNodes([spctestNodeId]);
+    const nodes_b = await ljp_sdk.getTempNode(spctesttempId);
+    const node = nodes[0];
+    //node info 节点信息
+    const org_id = node.org_id; // 获取节点所在组织ID
+    const node_id = node.node_id; // 获取节点ID
+    const title = node.title; // 获取节点标题
+    const temp_id = node.temp_id; // 获取节点主题类型ID
+    const r0 = await node.set_title('test set title'); // 设置节点标题
+    //prop 属性
+    const value = node.getPropByName('text'); // 获取属性值by属性名
+    const propIndex = node.getPropIndexByName('text'); // 获取属性坐标
+    const r10 = await node.set_prop('text', 'test update text00'); // 更新属性值by属性名
+    const r1 = await node.set_prop([5, 1], ['test update text11', new Date().getTime()]); //批量更新属性值 by prop index
+    const r2 = await node.set_prop(
+        ['text', 'date'],
+        ['test update text22', new Date().getTime()],
+    ); //批量更新属性值 by prop name
+    //status 状态
+    const status = node.status_prop; // 获取节点当前状态信息，包括节点负责人、参与人列表、开始时间、结束时间、备注
+    const status_index0 = node.status_index; // 获取节点状态坐标
+    const status_index1 = node.getStatusIndexByName('待办'); // 该状态名的坐标值status_index
+    const status_prop =  [spcAd,[],Date.now(),Date.now(),'备注']// 状态配置信息, 更新节点状态时需要传入该值
+    // const r3 = await node.set_status_index(status_index1, status_prop); // 设置节点状态 by status index(数字)
+    const r4 = await node.set_status_index('完成' , status_prop); // 设置节点状态 by status name
+    //message 消息
+    const r5 = await node.send_message(`消息内容${Date.now()}`); // 在节点上发送消息
+  });
   it('should read node', () => {});
   it('sdk.getNodes() should get nodes by node_ids: 获取节点对象列表 通过节点id列表', async function () {
     //https://master.test.mylinkpi.com/home/D3B7F181D7B5267DA56062643B0A84AE/f2ce55635c29260b15c7fd5fab0e100d/86789eb4b3434519b50e3e5a9b49e7bc?side=tree&vid=content
@@ -46,37 +77,6 @@ describe('node 节点数据读写', function () {
     assert(prop_index2 === -1);
   });
   describe('node param', () => {
-    it('test all', async function () {
-      //get node 通过节点ID或主题类型名称获取节点对象列表
-      let ljp_sdk = sdk;
-      const nodes = await ljp_sdk.getNodes([spctestNodeId]);
-      const nodes_b = await ljp_sdk.getTempNode(spctesttempId);
-      const node = nodes[0];
-      //node info 节点信息
-      const org_id = node.org_id; // 获取节点所在组织ID
-      const node_id = node.node_id; // 获取节点ID
-      const title = node.title; // 获取节点标题
-      const temp_id = node.temp_id; // 获取节点主题类型ID
-      const r0 = await node.set_title('test set title'); // 设置节点标题
-      //prop 属性
-      const value = node.getPropByName('text'); // 获取属性值by属性名
-      const propIndex = node.getPropIndexByName('text'); // 获取属性坐标
-      const r10 = await node.set_prop('text', 'test update text00'); // 更新属性值by属性名
-      const r1 = await node.set_prop([5, 1], ['test update text11', new Date().getTime()]); //批量更新属性值 by prop index
-      const r2 = await node.set_prop(
-        ['text', 'date'],
-        ['test update text22', new Date().getTime()],
-      ); //批量更新属性值 by prop name
-      //status 状态
-      const status_prop = node.status_prop; // 该主题的状态配置信息, 更新节点状态时需要传入该值
-      const status = node.status_prop; // 获取节点状态
-      const status_index0 = node.status_index; // 获取节点状态坐标
-      const status_index1 = node.getStatusIndexByName('待办'); // 该状态名的坐标值status_index
-      const r3 = await node.set_status_index(status_index1, status_prop); // 设置节点状态 by status index(数字)
-      const r4 = await node.set_status_index('完成', status_prop); // 设置节点状态 by status name
-      //message 消息
-      const r5 = await node.send_message(`消息内容${Date.now()}`); // 在节点上发送消息
-    });
     it('get param value and update param value', async () => {
       const node = (await sdk.getNodes([spctestNodeId]))[0];
       //文本类型
@@ -126,12 +126,24 @@ describe('node 节点数据读写', function () {
     // it('should update param quote', () => {});
   });
   describe('node status: 节点状态', () => {
+    it('status:testall', async () => {
+      const node = (await sdk.getNodes([spctestNodeId]))[0];
+      const status = node.status_prop; // 获取节点当前状态信息，包括节点负责人、参与人列表、开始时间、结束时间、备注
+      const status_index0 = node.status_index; // 获取节点状态坐标
+      const status_index1 = node.getStatusIndexByName('待办'); // 该状态名的坐标值status_index
+      const status_prop = [spcAd, [], Date.now(), Date.now()+10000, '备注0']// 状态配置信息, 更新节点状态时需要传入该值:[负责人，参与人列表，开始时间，结束时间，备注]
+      // const r3 = await node.set_status_index(status_index1, status_prop); // 设置节点状态 by status index(数字)
+      const r4 = await node.set_status_index('完成', status_prop); // 设置节点状态 by status name
+      //message 消息
+      const r6 = await sdk.updateVersion()
+    });
     it('sdk.getStatusIndexByName() should get status index by name：获取主题类型的状态的坐标值 ， 输入为主题id和状态名称', async () => {
       const status_index = await sdk.getStatusIndexByName(spctesttempId, '待办');
       assert(typeof status_index === 'number' && status_index !== -1);
       const status_index2 = await sdk.getStatusIndexByName(spctesttempId, 'not_exist');
       assert(status_index2 === -1);
     });
+
   });
   describe('node message: 在节点上发送消息', () => {
     it('sdk.sendMessage() should send message on node：在节点上发送消息', async () => {
@@ -163,6 +175,27 @@ describe('node tree 节点树操作', () => {
     const nodes = await sdk.getChildNodes(spctestNodeId);
     assert(nodes instanceof Array);
     assert(nodes[0] instanceof Object);
+  });
+  it('insert child: 对节点下新增一个节点', async () => {
+    //get node
+    const nodes = await sdk.getChildNodes(spctestNodeId);
+    assert(nodes instanceof Array);
+    assert(nodes[0] instanceof Object);
+    //insert child to node
+    const child_info = {
+      title: '新节点标题',
+      temp_id: spctesttempId, //设置新增节点的主题类型id
+      prop: {
+        //设置新增节点的属性值
+        // 属性名1: '属性值1',
+        // 属性名2: '属性值2',
+        'text': '新节点文本',
+      },
+      status_index :  sdk.getStatusIndexByName(spctesttempId, '待办')
+    };
+    const node = nodes[0];
+    const child_list = [child_info];
+    const newNodes = await node.insert_children(child_list ); //新增节点，返回新增节点对象列表
   });
 });
 describe('test demo', () => {
