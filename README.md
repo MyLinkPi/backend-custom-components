@@ -157,16 +157,16 @@ npm run build //编译打包/index.js, 覆盖写入/dist/index.js
 npm run test  //(本地触发时，传入的如触发节点id为根节点id，如果组件对触发节点类型有特别编程，测试时可以写死使用的触发节点id：task.n)
 ```
 
-打包为zip：先将组件放到/dist 文件夹中，再使用内置打包脚本：
+打包为zip：
 
 ```shell
-npm run pack  //打包/dist/index.js的内容为dist.zip
+npm run pack  //压缩编译后的/dist/index.js的内容为dist.zip
 ```
 
-上传zip： 上传保存组件到连接派平台, 
+上传zip：
 
 ```shell
-npm run upload   //需要输入组件名称，如：批量计算v1.0
+npm run upload   //需要输入组件名称，如：批量计算v1.0,  以节点为单位保存到组件仓库空间供用户管理 
 ```
 
 > ⚠️ **IMPORTANT NOTICE:**\
@@ -222,35 +222,35 @@ async function demo(ljp_sdk, task) {
 const nodes = await ljp_sdk.getNodes(['节点ID']);
 const nodes = await ljp_sdk.getTempNode('主题类型名称/主题类型id');
 const node = nodes[0];
+
 //node info 节点信息
 const org_id = node.org_id; // 获取节点所在组织ID
 const node_id = node.node_id; // 获取节点ID
 const title = node.title; // 获取节点标题
 const temp_id = node.temp_id; // 获取节点主题类型ID
 const r = await node.set_title('新标题'); // 设置节点标题
+
 //prop 节点属性值操作
 const value = node.getPropByName('属性名称');// 获取属性值by属性名
 const propIndex = node.getPropIndexByName('属性名称');// 获取属性坐标
-
 const r = await node.set_prop([1, 3, 10], [v1, v2, v3]);//批量更新属性值 by prop index
 const r = await node.set_prop(['name1', 'name3', 'name10'], [v1, v2, v3]);//批量更新属性值 by prop name
 
-
-// //status 状态 暂不支持
-// const status_prop = node.status_prop; // 该主题的状态配置信息, 更新节点状态时需要传入该值
-// const status = node.status_prop; // 获取节点状态
-// const status_index = node.status_index; // 获取节点状态坐标
-// const status_index = node.getStatusIndexByName('status_name'); // 该状态名的坐标值status_index
-// const r = await node.set_status_index(status_index, status_prop); // 设置节点状态 by status index(数字)
-// const r = await node.set_status_index('status_name', status_prop); // 设置节点状态 by status name
+//status 状态 
+const node = (await sdk.getNodes([nodeId]))[0];
+const statusIndex = await sdk.getStatusIndexByName(tempId, '状态名称'); // 了解某主题，某状态对应的坐标
+const statusIndex = await node.status_index; // 获取目标节点的状态坐标
+const status_prop= ['负责人id', ['参与人id','参与人id'], Date.now(), Date.now()+10000, '备注0']//状态信息结构
+const r = await node.set_status_index('状态名称或 坐标数字', status_prop); // 设置节点状态 和状态信息
+assert(r===true)
 
 //message 消息
 const r = await node.send_message('消息内容'); // 在节点上发送消息
+
 //tree 节点树结构操作
-
-
 const result = await node.move_to('父节点id', '前一个兄弟节点id(可选)');//移动节点
 const nodes = await node.children(); // 获取子节点
+
 //新增节点
 const child_info = { // 新增节点信息
     title: '新节点标题',
