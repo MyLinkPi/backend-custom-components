@@ -181,3 +181,19 @@ describe('test demo', () => {
     console.log('end');
   });
 });
+describe('api request',function(){
+  it('api post', async () => {
+    const url = 'https://test-inner.linkerpi.com:8008/api/yt/getUserStructure';
+    const r = await sdk.request({
+      method: 'POST',
+      uri: url,
+      body: {
+        // ad:'',
+        // token:'',
+        // org_id: '',
+        // onlySelf:true,
+      }
+    });
+    assert(r.status==='ok');
+  });
+})

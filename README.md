@@ -328,26 +328,20 @@ const result = await sdk.updateVersion();
 
 #### 3.4 调用定制api
 
-调用定制api，传入api名称和参数。
+调用任意api，要传入api路径和参数。
 
 ```javascript
-  request(req)
-{
-    const config = {};
-    if ('timeout' in req) config.timeout = req.timeout;
-    if ('headers' in req) config.headers = req.headers;
-    switch (req.method.toLowerCase()) {
-        case 'get':
-            return axios.get(req.uri, config).then((d) => d.data);
-        case 'post':
-        case 'put':
-            return axios[req.method.toLowerCase()](req.uri, req.body, config).then((d) => d.data);
+const url = 'https://test-inner.linkerpi.com:8008/api/yt/getUserStructure';
+const r = await sdk.request({
+    method: 'POST',
+    uri: url,
+    body: {
+        // ad:'',
+        // token:'',
+        // org_id: '',
+        // onlySelf:true,
     }
-    return null;
-
-}
-
-
-
+});
+assert(r.status === 'ok');
 
   ```
