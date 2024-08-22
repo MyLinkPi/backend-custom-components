@@ -165,3 +165,19 @@ describe('node tree 节点树操作', () => {
     assert(nodes[0] instanceof Object);
   });
 });
+describe('test demo', () => {
+  it('清空购物车', async () => {
+    const task = {
+      parm:{
+        order_node_id:'',
+        sub_order_node_id:'',
+      }
+    }
+    const pros = await sdk.getTempNode('商品0');
+
+
+
+
+    console.log('end');
+  });
+});

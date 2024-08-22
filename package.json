@@ -6,12 +6,13 @@
   "scripts": {
     "build_demo": "esbuild demo.js --bundle --platform=node --target=node16 --minify --outdir=./dist --allow-overwrite",
     "build": "esbuild index.js --bundle --platform=node --target=node16 --minify --outdir=./dist --allow-overwrite",
-    "clean": "cross-env rm -rf dist.zip dist",
+    "clean": "rimraf  dist.zip dist",
     "login": "node login.js",
     "pack": "node pack.js",
     "test_demo": "node test.js demo",
     "test": "node test.js",
-    "upload": "node upload.js"
+    "upload": "node upload.js",
+    "greet": "cross-env-shell GREETING=Hi NAME=Joe \"echo $GREETING && echo $NAME\""
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
   "dependencies": {
     "@mylinkpi/task_pool": "^1.0.1",
     "axios": "^1.7.4",
+    "decimal.js": "^10.4.3",
     "mocha": "^10.6.0",
     "quill-delta": "^4.2.2",
     "uuid": "^10.0.0"
@@ -31,7 +33,8 @@
     "cross-env": "^7.0.3",
     "esbuild": "^0.23.0",
     "prettier": "^3.3.3",
-    "readline-sync": "^1.4.10"
+    "readline-sync": "^1.4.10",
+    "rimraf": "^6.0.1"
   },
   "license": "MIT"
 }

@@ -281,6 +281,7 @@ class LJPNode {
  */
 class SDK {
   constructor(org_id) {
+    if(!org_id) throw new Error('missing org_id when creating SDK instance, check your env.js : TEST_ORG');
     this._org_id = org_id;
     /**
      * @type {{root_id: NODE_ID, to_sort: NODE_ID}| null}
