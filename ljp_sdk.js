@@ -1,10 +1,11 @@
-const { ljp_req } = require('./request');
+const { ljp_req, checkLogin } = require('./request');
 const { generateId, md5, IsTempId } = require('./util');
 const fs = require('node:fs');
 const path = require('node:path');
 const OSS = require('ali-oss');
 const axios = require('axios');
 const Delta = require('quill-delta');
+const env = require('./env');
 
 /**
  * @class LJPNode
@@ -273,6 +274,12 @@ class LJPNode {
   children() {
     return this._sdk.getChildNodes(this.node_id);
   }
+
+  get_url() {
+    return path
+      .join(env.LJP_URL_PREFIX, 'home', this.org_id, this._sdk._special_node.root_id, this.node_id)
+      .replaceAll('\\', '/');
+  }
 }
 
 /**
@@ -281,7 +288,8 @@ class LJPNode {
  */
 class SDK {
   constructor(org_id) {
-    if(!org_id) throw new Error('missing org_id when creating SDK instance, check your env.js : TEST_ORG');
+    if (!org_id)
+      throw new Error('missing org_id when creating SDK instance, check your env.js : TEST_ORG');
     this._org_id = org_id;
     /**
      * @type {{root_id: NODE_ID, to_sort: NODE_ID}| null}
@@ -293,6 +301,9 @@ class SDK {
   }
 
   async init() {
+    if (!(await checkLogin())) {
+      throw new Error('没有登陆');
+    }
     await this._update_special_node();
     await this._update_temp_map();
     return true;
@@ -325,7 +336,7 @@ class SDK {
     return ret.data.data.map(this._convertNode.bind(this));
   }
 
-  async getChildNodes(parent_id ) {
+  async getChildNodes(parent_id) {
     const ret = await ljp_req('/docapi/getChildren', {
       org_id: this._org_id,
       node_id: parent_id,
@@ -403,7 +414,10 @@ class SDK {
         refreshSTSTokenInterval: 60_000,
       });
       const upload_file = `${generateId()}.${path.basename(file_name).split('.').pop()}`;
-      await oss_client.put(path.join(ret.data.prefix, 'upload', upload_file).replace('\\','/'), file_data);
+      await oss_client.put(
+        path.join(ret.data.prefix, 'upload', upload_file).replace('\\', '/'),
+        file_data,
+      );
       const ret2 = await ljp_req('/api/file/store', {
         org_id: this._org_id,
         node_id,
