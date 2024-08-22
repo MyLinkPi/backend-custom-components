@@ -248,7 +248,10 @@ assert(r===true)
 const r = await node.send_message('消息内容'); // 在节点上发送消息
 
 //tree 节点树结构操作
-const result = await node.move_to('父节点id', '前一个兄弟节点id(可选)');//移动节点
+// > ⚠️ **IMPORTANT NOTICE:**\
+// > 如果移动到子节点或后代节点,将导致web端崩溃,和潜在的后端任务无限循环
+const result = await node.move_to('父节点id', '前一个兄弟节点id(可选)');//移动节点 
+
 const nodes = await node.children(); // 获取子节点
 
 //新增节点

@@ -13,7 +13,7 @@ switch (process.env.COMPUTERNAME) {
 let sdk = new SDK(org_id);
 const spctesttempId = '5FA69DF85ED411EF8E691070FD936D58'; // spc test temp
 const spctestNodeId = '86789eb4b3434519b50e3e5a9b49e7bc';
-let spcAd='BB5219CFB10011EEAB2D043F72FDCAE0';
+let spcAd = 'BB5219CFB10011EEAB2D043F72FDCAE0';
 before(async function () {
   this.timeout(100_000);
   await sdk.init();
@@ -37,17 +37,14 @@ describe('node 节点数据读写', function () {
     const propIndex = node.getPropIndexByName('text'); // 获取属性坐标
     const r10 = await node.set_prop('text', 'test update text00'); // 更新属性值by属性名
     const r1 = await node.set_prop([5, 1], ['test update text11', new Date().getTime()]); //批量更新属性值 by prop index
-    const r2 = await node.set_prop(
-        ['text', 'date'],
-        ['test update text22', new Date().getTime()],
-    ); //批量更新属性值 by prop name
+    const r2 = await node.set_prop(['text', 'date'], ['test update text22', new Date().getTime()]); //批量更新属性值 by prop name
     //status 状态
     const status = node.status_prop; // 获取节点当前状态信息，包括节点负责人、参与人列表、开始时间、结束时间、备注
     const status_index0 = node.status_index; // 获取节点状态坐标
     const status_index1 = node.getStatusIndexByName('待办'); // 该状态名的坐标值status_index
-    const status_prop =  [spcAd,[],Date.now(),Date.now(),'备注']// 状态配置信息, 更新节点状态时需要传入该值
+    const status_prop = [spcAd, [], Date.now(), Date.now(), '备注']; // 状态配置信息, 更新节点状态时需要传入该值
     // const r3 = await node.set_status_index(status_index1, status_prop); // 设置节点状态 by status index(数字)
-    const r4 = await node.set_status_index('完成' , status_prop); // 设置节点状态 by status name
+    const r4 = await node.set_status_index('完成', status_prop); // 设置节点状态 by status name
     //message 消息
     const r5 = await node.send_message(`消息内容${Date.now()}`); // 在节点上发送消息
   });
@@ -131,11 +128,11 @@ describe('node 节点数据读写', function () {
       const status = node.status_prop; // 获取节点当前状态信息，包括节点负责人、参与人列表、开始时间、结束时间、备注
       const status_index0 = node.status_index; // 获取节点状态坐标
       const status_index1 = node.getStatusIndexByName('待办'); // 该状态名的坐标值status_index
-      const status_prop = [spcAd, [], Date.now(), Date.now()+10000, '备注0']// 状态配置信息, 更新节点状态时需要传入该值:[负责人，参与人列表，开始时间，结束时间，备注]
+      const status_prop = [spcAd, [], Date.now(), Date.now() + 10000, '备注0']; // 状态配置信息, 更新节点状态时需要传入该值:[负责人，参与人列表，开始时间，结束时间，备注]
       // const r3 = await node.set_status_index(status_index1, status_prop); // 设置节点状态 by status index(数字)
       const r4 = await node.set_status_index('完成', status_prop); // 设置节点状态 by status name
       //message 消息
-      const r6 = await sdk.updateVersion()
+      const r6 = await sdk.updateVersion();
     });
     it('sdk.getStatusIndexByName() should get status index by name：获取主题类型的状态的坐标值 ， 输入为主题id和状态名称', async () => {
       const status_index = await sdk.getStatusIndexByName(spctesttempId, '待办');
@@ -143,7 +140,6 @@ describe('node 节点数据读写', function () {
       const status_index2 = await sdk.getStatusIndexByName(spctesttempId, 'not_exist');
       assert(status_index2 === -1);
     });
-
   });
   describe('node message: 在节点上发送消息', () => {
     it('sdk.sendMessage() should send message on node：在节点上发送消息', async () => {
@@ -189,13 +185,21 @@ describe('node tree 节点树操作', () => {
         //设置新增节点的属性值
         // 属性名1: '属性值1',
         // 属性名2: '属性值2',
-        'text': '新节点文本',
+        text: '新节点文本',
       },
-      status_index :  sdk.getStatusIndexByName(spctesttempId, '待办')
+      status_index: sdk.getStatusIndexByName(spctesttempId, '待办'),
     };
     const node = nodes[0];
     const child_list = [child_info];
-    const newNodes = await node.insert_children(child_list ); //新增节点，返回新增节点对象列表
+    const newNodes = await node.insert_children(child_list); //新增节点，返回新增节点对象列表
+  });
+  it('move to: 移动节点', async () => {
+    const node = (await sdk.getNodes([spctestNodeId]))[0];
+    // const r = await node.move_to(sdk._special_node.root_id);
+    assert(r === true);
+    //move back
+    const r2 = await node.move_to(sdk._special_node.root_id);
+    assert(r2 === true);
   });
 });
 describe('test demo', () => {
