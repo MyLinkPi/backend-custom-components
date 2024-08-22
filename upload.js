@@ -3,6 +3,7 @@ const SDK = require('./ljp_sdk');
 const { COMPONENT_ORG_ID } = require('./env');
 const fs = require('node:fs');
 const path = require('node:path');
+const { askQuestion } = require('./test_mocha/t4');
 const upload_file_name = path.join(__dirname, 'dist.zip');
 if (!fs.existsSync(upload_file_name)) {
   console.error('Package not found');
@@ -13,8 +14,9 @@ const sdk = new SDK(COMPONENT_ORG_ID);
 sdk
   .init()
   .then(async () => {
-    console.log('请输入组件名称:');
-    const 组件名称 = readline.question('');
+    // console.log('请输入组件名称:');
+    const 组件名称 = await askQuestion('请输入组件名称:');
+    console.log(`input is ${组件名称}`);
     const ret = await (
       await sdk.getRootNode()
     ).insert_children(
