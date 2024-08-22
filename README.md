@@ -21,6 +21,8 @@
         - [3.1 获取空间根节点](#31-获取空间根节点)
         - [3.2 获取成员昵称映射](#32-获取成员昵称映射)
         - [3.3 更新空间版本](#33-更新空间版本)
+        - [3.4 调用定制api](#34-调用定制api)
+    - [4. 数据源操作](#4-数据源操作)
 
 ## 1. 后端自定义组件介绍
 
@@ -346,3 +348,32 @@ const r = await sdk.request({
 assert(r.status === 'ok');
 
   ```
+### 4. 数据源操作
+对用户空间配置的数据库，可执行任意sql语句。
+```node
+//测试脚本示例：
+//空间中有数据源名称为：spc测试数据源2，包含表名为：animals， 实际表名为：ljp_2697****1C6BDFB1F_animals, 要执行的sql语句为：select * from  ljp_2697****1C6BDFB1F_animals limit 1
+describe('db 数据源操作', () => {
+    before(async function () {
+        sdk = new SDK('2697****1C6BDFB1F');
+        await sdk.init();
+    });
+    it('get real table name: 获取数据表的实际表名', async () => {
+        try {
+            const table_name = await sdk.getTableInnerName('spc测试数据源2', 'animals');//参数：数据源名称，表名， 返回：实际表名
+            assert(typeof table_name === 'string');
+        } catch (e) {
+            //当找不到目标的内部表名时，会报错
+            console.log(e);
+        }
+    });
+    it('db query 数据库查询操作', async () => {
+        //获取表名后，可以进行数据库sql语句执行
+        const table_name = await sdk.getTableInnerName('spc测试数据源2', 'animals');//参数：数据源名称，表名， 返回：实际表名
+        const sql = `select * from ${table_name} limit 1`;
+        const r = await sdk.dbQuery('spc测试数据源2', sql);//参数：数据源名称，sql语句， 返回：查询结果
+        assert(r instanceof Array);
+    });
+});
+
+```

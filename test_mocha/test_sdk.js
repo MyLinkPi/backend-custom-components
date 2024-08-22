@@ -10,7 +10,7 @@ switch (process.env.COMPUTERNAME) {
   default:
     org_id = env.DEMO_ORG;
 }
-const sdk = new SDK(org_id);
+let sdk = new SDK(org_id);
 const spctesttempId = '5FA69DF85ED411EF8E691070FD936D58'; // spc test temp
 const spctestNodeId = '86789eb4b3434519b50e3e5a9b49e7bc';
 
@@ -168,20 +168,17 @@ describe('node tree 节点树操作', () => {
 describe('test demo', () => {
   it('清空购物车', async () => {
     const task = {
-      parm:{
-        order_node_id:'',
-        sub_order_node_id:'',
-      }
-    }
+      parm: {
+        order_node_id: '',
+        sub_order_node_id: '',
+      },
+    };
     const pros = await sdk.getTempNode('商品0');
-
-
-
 
     console.log('end');
   });
 });
-describe('api request',function(){
+describe('api request', function () {
   it('api post', async () => {
     const url = 'https://test-inner.linkerpi.com:8008/api/yt/getUserStructure';
     const r = await sdk.request({
@@ -192,8 +189,29 @@ describe('api request',function(){
         // token:'',
         // org_id: '',
         // onlySelf:true,
-      }
+      },
     });
-    assert(r.status==='ok');
+    assert(r.status === 'ok');
   });
-})
+});
+describe('db 数据源操作', () => {
+  before(async function () {
+    sdk = new SDK('26974F1F9970F3036E2104D1C6BDFB1F');
+    await sdk.init();
+  });
+  it('get real table name: 获取数据表的实际表名', async () => {
+    try {
+      const table_name = await sdk.getTableInnerName('spc测试数据源2', 'animals');
+      assert(typeof table_name === 'string');
+    } catch (e) {
+      //当找不到目标的内部表名时，会报错
+      console.log(e);
+    }
+  });
+  it('db query 数据库查询操作', async () => {
+    //获取表名后，可以进行数据库sql语句执行
+    const sql = 'select * from animals limit 1';
+    const r = await sdk.dbQuery('spc测试数据源2', sql);
+    assert(r instanceof Array);
+  });
+});
