@@ -2,17 +2,10 @@ const { describe, it, before } = require('mocha');
 const assert = require('assert');
 const SDK = require('./../ljp_sdk');
 const env = require('./../env');
-let org_id;
-switch (process.env.COMPUTERNAME) {
-  // case 'LAPTOP-SHIPC':
-  //   org_id = '26974F1F9970F3036E2104D1C6BDFB1F'; //spc test space
-  //   break;
-  default:
-    org_id = env.DEMO_ORG;
-}
+let org_id = 'D3B7F181D7B5267DA56062643B0A84AE'
 let sdk = new SDK(org_id);
-const spctesttempId = '5FA69DF85ED411EF8E691070FD936D58'; // spc test temp
-const spctestNodeId = '86789eb4b3434519b50e3e5a9b49e7bc';
+const spctesttempId = 'A3B5337F74FAE3F7DBE6ED6BDC27BD23'; // spc test temp
+const spctestNodeId = '27234d5b10c8439a86540b0ca3150dfa';
 let spcAd = 'BB5219CFB10011EEAB2D043F72FDCAE0';
 before(async function () {
   this.timeout(100_000);

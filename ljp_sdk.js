@@ -12,6 +12,11 @@ const env = require('./env');
  * @implements {NODE}
  */
 class LJPNode {
+  /**
+   *
+   * @param {SDK} sdk
+   * @param node_data
+   */
   constructor(sdk, node_data) {
     this._sdk = sdk;
     this._data = node_data;
