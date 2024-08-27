@@ -23,6 +23,10 @@
         - [3.3 更新空间版本](#33-更新空间版本)
         - [3.4 调用定制api](#34-调用定制api)
     - [4. 数据源操作](#4-数据源操作)
+- [6. 组件维护（更新、删除）](#6-组件维护更新删除)
+    - [更新组件一般步骤：](#更新组件一般步骤)
+    - [批量升级：](#批量升级)
+        - [批量升级示例](#批量升级示例)
 
 ## 1. 后端自定义组件介绍
 
@@ -127,8 +131,8 @@ module.exports = {
  */
 async function demo(ljp_sdk, task) {
 
-    console.log('固定输入参数', JSON.stringify(task.param,null,2))//查看可配置的固定输入参数
-    
+    console.log('固定输入参数', JSON.stringify(task.param, null, 2))//查看可配置的固定输入参数
+
     const temp_node = await ljp_sdk.getTempNode('测试主题');
     const task_pool = new TaskPool(32);
     for (const node of temp_node) {
@@ -145,6 +149,7 @@ module.exports = demo;
 ```
 
 测试组件本地平运行效果
+
 ```shell
 npm run test_demo //本地测试组件功能, 脚本调用/demo.js中的导出函数, 可debug
 ```
@@ -176,9 +181,10 @@ npm run upload   //需要输入组件名称，如：批量计算v1.0,  以节点
 
 上传成功后，可在组件仓库配置可见性，然后可在组件目标空间配置自动化操作，配置触发条件和要执行的组件。
 
-
 ## 4. 自定义组件管理和配置运行
+
 ### 组件管理：
+
 在组件仓库空间管理，通过修改节点属性控制组件可见性。\
 状态：已启用、已禁用、已删除（禁用则不可见，不可运行）\
 参与者：被包含的人可在自动化配置看到此组件\
@@ -186,10 +192,13 @@ npm run upload   //需要输入组件名称，如：批量计算v1.0,  以节点
 负责人：同上\
 是否公开：是否对所有人可见\
 ![img_3.png](img_3.png)
+
 ### 配置运行：
+
 管理好可见性并且状态为启用后，拥有组件权限的用户可以进入空间设置，在主题类型>选择主题>自动化操作 菜单中，可在指定的主题中配置触发条件 和要执行的组件。
 ![img.png](img.png)
 执行操作可额外配置优先级、传入参数。 传入参数是一个json对象文本，组件中通过task.param获取。
+
 ```node
 //组件使用参数：{a:1, b:2}
 async function main(ljp_sdk, task) {
@@ -240,9 +249,9 @@ const r = await node.set_prop(['name1', 'name3', 'name10'], [v1, v2, v3]);//批�
 const node = (await sdk.getNodes([nodeId]))[0];
 const statusIndex = await sdk.getStatusIndexByName(tempId, '状态名称'); // 了解某主题，某状态对应的坐标
 const statusIndex = await node.status_index; // 获取目标节点的状态坐标
-const status_prop= ['负责人id', ['参与人id','参与人id'], Date.now(), Date.now()+10000, '备注0']//状态信息结构
+const status_prop = ['负责人id', ['参与人id', '参与人id'], Date.now(), Date.now() + 10000, '备注0']//状态信息结构
 const r = await node.set_status_index('状态名称或 坐标数字', status_prop); // 设置节点状态 和状态信息
-assert(r===true)
+assert(r === true)
 
 //message 消息
 const r = await node.send_message('消息内容'); // 在节点上发送消息
@@ -263,7 +272,7 @@ const child_info = { // 新增节点信息
         属性名1: '属性值1',
         属性名2: '属性值2',
     },
-    status_index :  sdk.getStatusIndexByName('节点主题名', '待办')// 设置新增节点的状态
+    status_index: sdk.getStatusIndexByName('节点主题名', '待办')// 设置新增节点的状态
 };
 const child_list = [child_info];
 const node = nodes[0];
@@ -271,6 +280,7 @@ const newNodes = await node.insert_children(child_list); //批量新增节点，
 
 // 
 ```
+
 [节点发送消息效果图](img_1.png)\
 以上修改操作者和消息发送者，都记录操作者身份，身份为组件开发者的登录身份。
 
@@ -306,19 +316,21 @@ n
 ```    
 
 #### 2.4 节点状态
+
 ![img_2.png](img_2.png)
 主题类型可配置节点的可选状态，状态可以是一个名称标记，也可以包含丰富的信息：（包含状态负责人、参与人、开始时间、结束时间、备注 五个字段）\
 节点的状态用一个数字坐标表示，状态信息用一个数组对象表示：['状态负责人', ['参与人1','参2'], 开始时间ms, 结束时间ms, '备注']\
 状态信息的人员用用户id字符串表示，时间用毫秒数表示,开始和结束不能相同，备注用字符串表示。
+
 ```javascript  
 const node = (await sdk.getNodes([nodeId]))[0];
 const statusIndex = await sdk.getStatusIndexByName(tempId, '状态名称'); // 了解某主题，某状态对应的坐标
 const statusIndex = await node.status_index; // 获取目标节点的状态坐标
 
 //状态信息结构
-const status_prop= ['负责人id', ['参与人id','参与人id'], Date.now(), Date.now()+10000, '备注0']
+const status_prop = ['负责人id', ['参与人id', '参与人id'], Date.now(), Date.now() + 10000, '备注0']
 const r = await node.set_status_index('状态名称或 坐标数字', status_prop); // 设置节点状态 和状态信息
-assert(r===true)
+assert(r === true)
 ```    
 
 #### 2.5 在节点上发送消息
@@ -329,6 +341,7 @@ assert(r===true)
 const node = (await sdk.getNodes([nodeId]))[0];
 const result = await node.send_message('消息内容');  
 ```    
+
 [节点发送消息效果图](img_1.png)
 
 ### 3. 空间特殊操作
@@ -376,8 +389,11 @@ const r = await sdk.request({
 assert(r.status === 'ok');
 
   ```
+
 ### 4. 数据源操作
+
 对用户空间配置的数据库，可执行任意sql语句。
+
 ```node
 //测试脚本示例：
 //空间中有数据源名称为：spc测试数据源2，包含表名为：animals， 实际表名为：ljp_2697****1C6BDFB1F_animals, 要执行的sql语句为：select * from  ljp_2697****1C6BDFB1F_animals limit 1
@@ -407,20 +423,27 @@ describe('db 数据源操作', () => {
 ```
 
 ## 6. 组件维护（更新、删除）
+
 每一次npm run upload 成功，都会在组件仓库空间生成一个组件对象。可重名，不会发生覆盖替换现象。
 上传时一定要手动在组件名后加版本号, 否则更新时容易出现无法逆转的人为错误。(将意料之外的自动化组件配置替换掉运行组件)
+
 ### 更新组件一般步骤：
+
 1. 上传新版本，命名时注意加版本号
 2. 在组件仓库空间找到新版本，调整权限（见组件管理）
 3. 在组件目标空间配置自动化操作，选择新版本，保存即可。
- 
+
 ### 批量升级：
+
 此操作支持将所有指定的组件 替换为 一个指定的组件
+
 1. 上传新版本，命名时注意加版本号
 2. 在组件仓库空间找到新版本，调整权限（见组件管理）
 3. 在仓库空间的升级列表中， 创建升级任务， 配置新组件、旧组件（可多选）。保存
 4. 点击状态按钮：“开始升级” , 升级结果会显示在该节点正文内容中。
+
 #### 批量升级示例
+
 用testV3.0版本替换 testV2.0版本的组件 ：
 正文中显示更新了组件的自动化配置的数量，如果与预期数量不符，说明有意料之外的组件的自动化配置使用了旧版本的组件。
 ![一个升级例子](img_4.png)
