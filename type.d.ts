@@ -188,6 +188,7 @@ export interface LJP_SDK {
   getNicknameMap(): Promise<NICKNAME_MAP>;
   getPropIndexByName(temp_id: TEMP_ID, name: PROP_NAME): PROP_INDEX;
   getStatusIndexByName(temp_id: TEMP_ID, name: STATUS_NAME): STATUS_INDEX;
+  getTempIdByName(name: TEMP_NAME): TEMP_ID;
   updateVersion(): Promise<boolean>;
 
   getChildren(node_id: NODE_ID): Promise<Array<NODE>>;

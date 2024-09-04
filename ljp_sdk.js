@@ -477,6 +477,10 @@ class SDK {
     return this._temp_map[temp_id].task_status.findIndex((n) => n?.name === name);
   }
 
+  getTempIdByName(name) {
+    return this._temp_map[name].temp_id;
+  }
+
   async updateVersion() {
     return true;
   }
