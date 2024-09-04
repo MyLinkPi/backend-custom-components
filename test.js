@@ -24,7 +24,7 @@ sdk.init().then(() =>
   index(sdk, {
     ad: getAD(),
     o: org_id,
-    n: sdk._special_node.root_id,
+    n: env.TEST_NODE ?? sdk._special_node.root_id,
     parm: { testDefault: 'testDefault' },
   })
     .then(() => {
