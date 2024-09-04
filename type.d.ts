@@ -160,7 +160,7 @@ export interface LJP_SDK {
   getTempNode(temp_id: TEMP_ID | TEMP_NAME): Promise<Array<NODE>>;
   searchNode(
     temp_id: TEMP_ID | TEMP_NAME,
-    temp_prop_map:
+    temp_prop_map?:
       | Array<{
           index: PROP_INDEX | PROP_NAME;
           op: 'or' | 'and';
@@ -168,7 +168,7 @@ export interface LJP_SDK {
         }>
       | null
       | undefined,
-    status:
+    status?:
       | {
           status_index: Array<STATUS_INDEX | STATUS_NAME> | null | undefined;
           status_owner: Array<ACCOUNT_ID> | null | undefined;
@@ -178,12 +178,12 @@ export interface LJP_SDK {
         }
       | null
       | undefined,
-    create_time: { begin: number; end: number } | null | undefined,
-    modify_time: { begin: number; end: number } | null | undefined,
-    create_user: Array<ACCOUNT_ID> | null | undefined,
-    modify_user: Array<ACCOUNT_ID> | null | undefined,
-    title: Array<string> | null | undefined,
-    tag: { op: 'or' | 'and'; value: Array<string> } | null | undefined,
+    create_time?: { begin: number; end: number } | null | undefined,
+    modify_time?: { begin: number; end: number } | null | undefined,
+    create_user?: Array<ACCOUNT_ID> | null | undefined,
+    modify_user?: Array<ACCOUNT_ID> | null | undefined,
+    title?: Array<string> | null | undefined,
+    tag?: { op: 'or' | 'and'; value: Array<string> } | null | undefined,
   ): Promise<Array<NODE>>;
   getNicknameMap(): Promise<NICKNAME_MAP>;
   getPropIndexByName(temp_id: TEMP_ID, name: PROP_NAME): PROP_INDEX;

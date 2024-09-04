@@ -9,6 +9,7 @@
     "clean": "rimraf  dist.zip dist",
     "login": "node login.js",
     "pack": "node pack.js",
+    "debug": "node test.js debug",
     "test_demo": "node test.js demo",
     "test": "node test.js",
     "upload": "node upload.js",
