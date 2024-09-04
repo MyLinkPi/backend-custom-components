@@ -158,6 +158,33 @@ export interface LJP_SDK {
   getRootNode(): Promise<NODE>;
   getNodes(node_id_list: Array<NODE_ID>): Promise<Array<NODE>>;
   getTempNode(temp_id: TEMP_ID | TEMP_NAME): Promise<Array<NODE>>;
+  searchNode(
+    temp_id: TEMP_ID | TEMP_NAME,
+    temp_prop_map:
+      | Array<{
+          index: PROP_INDEX | PROP_NAME;
+          op: 'or' | 'and';
+          value: Array<STRING_PROP | NUMBER_PROP>;
+        }>
+      | null
+      | undefined,
+    status:
+      | {
+          status_index: Array<STATUS_INDEX | STATUS_NAME> | null | undefined;
+          status_owner: Array<ACCOUNT_ID> | null | undefined;
+          status_user: { op: 'or' | 'and'; ad: Array<ACCOUNT_ID> } | null | undefined;
+          status_start_time: { begin: number; end: number } | null | undefined;
+          status_end_time: { begin: number; end: number } | null | undefined;
+        }
+      | null
+      | undefined,
+    create_time: { begin: number; end: number } | null | undefined,
+    modify_time: { begin: number; end: number } | null | undefined,
+    create_user: Array<ACCOUNT_ID> | null | undefined,
+    modify_user: Array<ACCOUNT_ID> | null | undefined,
+    title: Array<string> | null | undefined,
+    tag: { op: 'or' | 'and'; value: Array<string> } | null | undefined,
+  ): Promise<Array<NODE>>;
   getNicknameMap(): Promise<NICKNAME_MAP>;
   getPropIndexByName(temp_id: TEMP_ID, name: PROP_NAME): PROP_INDEX;
   getStatusIndexByName(temp_id: TEMP_ID, name: STATUS_NAME): STATUS_INDEX;

@@ -136,9 +136,7 @@ class LJPNode {
     const body = {
       org_id: this.org_id,
       temp_id: this.temp_id,
-      node: [
-         this.node_id,
-      ],
+      node: [this.node_id],
       index,
       owner: prop[0] ?? null,
       user: prop[1] ?? [],
@@ -366,6 +364,100 @@ class SDK {
         onlyId: true,
       })
     ).data.data;
+    return await this.getNodes(node_id_list);
+  }
+
+  async searchNode(
+    temp_id,
+    temp_prop_map,
+    status,
+    create_time,
+    modify_time,
+    create_user,
+    modify_user,
+    title,
+    tag,
+  ) {
+    if (!this._temp_map) await this._update_temp_map();
+    if (!(temp_id in this._temp_map)) throw new Error(`找不到主题类型: ${temp_id}`);
+    const prop = {
+      org_id: this._org_id,
+      temp_id: this._temp_map[temp_id].temp_id,
+      onlyId: true,
+    };
+    const tempProps = [];
+    if (Array.isArray(temp_prop_map)) {
+      for (const prop of temp_prop_map) {
+        if (!prop.value?.length) continue;
+        const index =
+          typeof prop.index === 'string'
+            ? this.getPropIndexByName(temp_id, prop.index)
+            : prop.index;
+        if (prop.op === 'or') {
+          tempProps.push(prop.value.map((v) => `p${index}-${v}`));
+        } else {
+          for (const v of prop.value) {
+            tempProps.push(`p${index}-${v}`);
+          }
+        }
+      }
+    }
+    if (status) {
+      if (Array.isArray(status.status_index) && status.status_index.length) {
+        tempProps.push(
+          status.status_index.map(
+            (index) => `si-${typeof index === 'string' ? this.getStatusIndexByName(index) : index}`,
+          ),
+        );
+      }
+      if (Array.isArray(status.status_owner) && status.status_owner.length) {
+        tempProps.push(status.status_owner.map((ad) => `s0-${ad}`));
+      }
+      if (status.status_user) {
+        if (status.status_user.op === 'or') {
+          tempProps.push(status.status_user.ad.map((ad) => `s1-${ad}`));
+        } else {
+          for (const ad of status.status_user.ad) {
+            tempProps.push(`s1-${ad}`);
+          }
+        }
+      }
+      if (status.status_start_time) {
+        prop.startTime = [status.status_start_time.begin, status.status_start_time.end];
+      }
+      if (status.status_end_time) {
+        prop.endTime = [status.status_end_time.begin, status.status_end_time.end];
+      }
+    }
+    if (create_time) {
+      prop.createTime = [create_time.begin, create_time.end];
+    }
+    if (modify_time) {
+      prop.modifyTime = [modify_time.begin, modify_time.end];
+    }
+    if (Array.isArray(create_user)) {
+      prop.createUser = create_user;
+    }
+    if (Array.isArray(modify_user)) {
+      prop.modifyUser = modify_user;
+    }
+    if (Array.isArray(title)) {
+      prop.keyWords = title;
+      prop.onlyTitle = true;
+    }
+    if (tag) {
+      if (tag.op === 'or') {
+        tempProps.push(tag.value.map((v) => `t-${v}`));
+      } else {
+        for (const v of tag.value) {
+          tempProps.push(`t-${v}`);
+        }
+      }
+    }
+    if (tempProps.length) {
+      prop.tempProps = tempProps;
+    }
+    const node_id_list = (await ljp_req('/docapi/getNodeByFilter', prop)).data.data;
     return await this.getNodes(node_id_list);
   }
 
