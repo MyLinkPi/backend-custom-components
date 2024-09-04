@@ -6,6 +6,7 @@ const OSS = require('ali-oss');
 const axios = require('axios');
 const Delta = require('quill-delta');
 const env = require('./env');
+const url = require('node:url');
 
 /**
  * @class LJPNode
@@ -279,9 +280,7 @@ class LJPNode {
   }
 
   get_url() {
-    return path
-      .join(env.LJP_URL_PREFIX, 'home', this.org_id, this._sdk._special_node.root_id, this.node_id)
-      .replaceAll('\\', '/');
+    return `${env.LJP_URL_PREFIX}${env.LJP_URL_PREFIX.endsWith('/') ? '' : '/'}home/${this.org_id}/${this._sdk._special_node.root_id}/${this.node_id}`;
   }
 }
 
