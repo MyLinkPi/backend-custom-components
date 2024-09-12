@@ -47,7 +47,7 @@ async function captchaLogin(phone, captcha) {
     fs.writeFileSync(env.LOGIN_FILE, JSON.stringify({ ad, token, device_id }));
     console.log('登陆成功');
   } else {
-    throw new Error('登陆失败', ret?.data?.message ?? '');
+    throw new Error('登陆失败' + ret?.data?.message ?? '');
   }
 }
 

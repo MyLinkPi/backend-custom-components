@@ -30,7 +30,7 @@
 
 ## 1. 后端自定义组件介绍
 
-连接派零代码平台支持用户执行灵活的数据操作，通过sdk编写自定义组件，上传到用户目标空间，可任意配置触发条件。
+连接派零代码平台支持配置指定自动化，对于超出预设自动化能力的需求，支持用户编写自定义组件，上传到组件仓库空间，供用户配置自动化操作使用。
 组件示例：
 
 ```node
@@ -89,7 +89,26 @@ module.exports = demo;
 
 ```
 
-自定义组件的结构是一个nodejs模块，模块导出一个函数，函数接受两个参数：ljp_sdk和task，ljp_sdk是平台提供的sdk，绝大部分功能通过调用此sdk对象实现。task是平台运行组件时提供基础信息的任务对象,task可在配置自动化时输入固定的自定义参数，供组件使用。
+### 组件结构
+
+1. 代码结构： 自定义组件的结构是一个nodejs模块，模块导出一个函数。
+2. 函数结构：异步函数接受两个参数：ljp_sdk和task。
+3. ljp_sdk是平台提供的sdk，绝大部分功能通过调用此sdk对象实现。
+4. task包含组件被调用前 产生的基础信息：
+
+```node
+task =
+    {
+        n: "", // 触发本次操作的节点id
+        ad: '',//触发本次操作的用户id。（一般是配置自动化的用户）
+        parm: { // 开发者提供的自定义参数。（在配置自动化界面输入）
+            "a": 1,
+            "b": 2
+        }
+    }
+```
+> ⚠️ **IMPORTANT NOTICE:**\
+> 本地调试时由于没有触发过程，task.n会默认使用env.js 中定义的节点id\
 
 ## 2. sdk结构、功能
 
@@ -98,7 +117,7 @@ module.exports = demo;
 -
     2. sdk类名叫SDK, 位置在 /backend-custom-components/ljp_sdk.js
 -
-    3. 组件开发中的sdk使用：组件注释引用{LJP_SDK}类型定义，即可在组件函数中使用sdk提供的功能。\
+    3. 组件开发中的sdk使用：组件注释引用{LJP_SDK}类型定义，即可在组件函数中使用sdk提供的功能。
 
 ## 3. 自定义组件开发过程
 
@@ -111,25 +130,35 @@ module.exports = demo;
 npm run login
 ```
 
+-
+    2. 配置环境，编辑env.js文件，配置目标用户空间信息(在测试脚本中会被自动引用,用于初始化sdk对象)
+
 ```node
-//env.js: 在此配置目标用户空间信息(在测试脚本中会被自动引用,用于初始化sdk对象)
+//env.js: 在此配置目标用户空间信息(在测试脚本中会被自动引用,用于初始化sdk对象) , 配置测试测试触发节点id（本地调试组件时，task.n 的值）
 const path = require('node:path');
 module.exports = {
     LJP_URL_PREFIX: 'https://t****pi.com:8008/', // 填写对应环境的网址
     TEST_ORG: '', // 填写测试ORG_ID, 用于测试时实例化sdk对象
+    TEST_NODE: '', // 填写测试触发点node_id
     DEMO_ORG: 'D3B7F181D7B5267DA56062643B0A84AE',
     LOGIN_FILE: path.join(__dirname, '.login'), // 登录信息保存位置
     //...
 };
+```
+> ⚠️ **IMPORTANT NOTICE:**\
+> 本地调试时由于没有触发过程，task.n会默认使用env.js 中定义的节点id: TEST_NODE\
+-
+    3. 开发组件，编辑index.js文件，实现组件功能。
 
+```node
 
-//编辑demo.js: 使用sdk制作组件
+//编辑index.js: 使用sdk制作组件
 /**
  * @param ljp_sdk {LJP_SDK} //使用类型注释引用SDK类型定义，即可在开发中引用sdk提供的工具
  * @param task {Task}
  * @returns {Promise<void>}
  */
-async function demo(ljp_sdk, task) {
+async function main(ljp_sdk, task) {
 
     console.log('固定输入参数', JSON.stringify(task.param, null, 2))//查看可配置的固定输入参数
 
@@ -145,16 +174,18 @@ async function demo(ljp_sdk, task) {
     await ljp_sdk.updateVersion();
 }
 
-module.exports = demo;
+module.exports = main;
 ```
 
-测试组件本地平运行效果
+-
+    4. 测试组件本地运行效果
 
 ```shell
-npm run test_demo //本地测试组件功能, 脚本调用/demo.js中的导出函数, 可debug
+npm run debug //本地测试组件功能, 脚本调用/index.js中的导出函数, 可debug
 ```
 
-测试组件在平台上的实际运行效果: (包含自定义依赖库的编译打包后的独立组件) (先将准备测试的组件代码复制到index.js中)
+-
+    5. 测试组件在平台上的实际运行效果: (包含自定义依赖库的编译打包后的独立组件) (先将准备测试的组件代码复制到index.js中)
 
 ```shell
 npm run clean //清理/dist/* 和 dist.zip 
@@ -162,13 +193,15 @@ npm run build //编译打包/index.js, 覆盖写入/dist/index.js
 npm run test  //(本地触发时，传入的如触发节点id为根节点id，如果组件对触发节点类型有特别编程，测试时可以写死使用的触发节点id：task.n)
 ```
 
-打包为zip：
+-
+    6. 打包为zip：
 
 ```shell
 npm run pack  //压缩编译后的/dist/index.js的内容为dist.zip
 ```
 
-上传zip：
+-
+    7. 上传zip：
 
 ```shell
 npm run upload   //需要输入组件名称，如：批量计算v1.0,  以节点为单位保存到组件仓库空间供用户管理 
@@ -179,7 +212,8 @@ npm run upload   //需要输入组件名称，如：批量计算v1.0,  以节点
 > 对节点数据修改完毕后需要调用sdk.updateVersion()，让前端同步数据\
 > 组件触发配置页面可输入自定义参数，组件代码中通过task.param获取\
 
-上传成功后，可在组件仓库配置可见性，然后可在组件目标空间配置自动化操作，配置触发条件和要执行的组件。
+-
+    8. 上传成功后，可在组件仓库配置可见性，然后可在组件目标空间配置自动化操作，配置触发条件和要执行的组件。
 
 ## 4. 自定义组件管理和配置运行
 
@@ -255,6 +289,18 @@ assert(r === true)
 
 //message 消息
 const r = await node.send_message('消息内容'); // 在节点上发送消息
+
+//节点搜索
+const nodes = await sdk.searchNode('商品0', [
+    {
+        index: 'proName',
+        value: ['火柴'],
+        op: 'and',
+    },
+]);
+if (nodes.length === 0) {
+    throw new Error('未找到节点');
+}
 
 //tree 节点树结构操作
 // > ⚠️ **IMPORTANT NOTICE:**\
@@ -343,6 +389,80 @@ const result = await node.send_message('消息内容');
 ```    
 
 [节点发送消息效果图](img_1.png)
+
+#### 2.6 新增节点
+
+两步：1.准备一个父节点，2.准备一个或多个子节点信息，调用父节点的insert_children方法。
+效果：父节点下新增一个或多个子节点。
+
+```node
+chartNode = 购物车节点
+pro = 商品节点
+const r0 = await chartNode.insert_children([{
+    title: '火柴', // 新节点标题
+    temp_id: '待购物', // 新节点主题类型id 或 主题类型名称
+    prop: {  // 新节点所有属性值
+        proId: pro.getPropByName('proId'),
+        quantity: 23,
+        datetime: Date.now(),
+    },
+    status_index: ljp_sdk.getStatusIndexByName('待购物', '待办'), // 新节点状态坐标
+}]);
+if (r0.length === 0) {// 返回结果是新增节点对象列表
+    throw new Error('插入失败');
+}
+console.log('chart:', chartNode.title, '新增待购物:', r0[0].title, r0[0].getPropByName('quantity'), '个');
+```
+
+#### 2.7 搜索节点
+
+两步：1.确定节点的类型，2.确定节点的属性\
+可选：3.确定节点的状态\
+额外可选：4.确定节点的负责人，5.确定节点的参与人\
+效果：返回符合条件的节点列表。
+
+```node
+//火柴的单价是多少？
+const nodes = await ljp_sdk.searchNode(
+    '商品0', //节点类型 
+    [
+        {
+            index: 'proName', //属性的坐标或属性的名称
+            value: ['火柴'],   // 属性的值
+            op: 'and',        // 逻辑操作符
+        },
+        {
+            ...更多属性匹配条件
+        }
+    ],
+    {
+        status_index: [0, 1, 2], //状态坐标 or
+        status_owner: ['BB5219CFB10011EEAB2D043F72FDCAE0'],  // 状态拥有者
+        status_user: { //状态参与者
+            op: 'or',
+            ad: ['BB5219CFB10011EEAB2D043F72FDCAE0', 'BB5219CFB10011EEAB2D043F72FDCAE0'],
+        },
+        status_start_time: {begin: Date.now(), end: Date.now()}, //状态开始时间范围
+        status_end_time: {begin: Date.now(), end: Date.now()},   // 状态结束时间范围
+    },
+    { //创建时间范围
+        begin: Date.now(),
+        end: Date.now(),
+    },
+    { // 最后编辑时间范围
+        begin: Date.now(),
+        end: Date.now(),
+    },
+    ['BB5219CFB10011EEAB2D043F72FDCAE0', 'BB5219CFB10011EEAB2D043F72FDCAE0'], //创建者 or
+    ['BB5219CFB10011EEAB2D043F72FDCAE0', 'BB5219CFB10011EEAB2D043F72FDCAE0'], //编辑者 or
+    ['火柴', '啤酒'], //标题 or
+    {op: 'and', value:['tag1', 'tag2']}
+);
+if (nodes.length === 0) {
+    throw new Error('未找到节点');
+}
+const price = nodes[0].getPropByName('price');
+```
 
 ### 3. 空间特殊操作
 

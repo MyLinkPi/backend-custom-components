@@ -2,7 +2,7 @@ const { describe, it, before } = require('mocha');
 const assert = require('assert');
 const SDK = require('./../ljp_sdk');
 const env = require('./../env');
-let org_id = 'D3B7F181D7B5267DA56062643B0A84AE'
+let org_id = 'D3B7F181D7B5267DA56062643B0A84AE';
 let sdk = new SDK(org_id);
 const spctesttempId = 'A3B5337F74FAE3F7DBE6ED6BDC27BD23'; // spc test temp
 const spctestNodeId = '27234d5b10c8439a86540b0ca3150dfa';
@@ -143,7 +143,7 @@ describe('node 节点数据读写', function () {
     });
   });
 });
-describe('special function', () => {
+describe('特殊方法', () => {
   it('sdk.getRootNode() should get org root node：获取空间根节点', async function () {
     const node = await sdk.getRootNode();
     assert.deepEqual(typeof node, 'object');
@@ -159,11 +159,53 @@ describe('special function', () => {
     assert(r === true);
   });
 });
-describe('node tree 节点树操作', () => {
+describe('节点crud', () => {
   it('get child node: 获取子节点', async () => {
     const nodes = await sdk.getChildNodes(spctestNodeId);
     assert(nodes instanceof Array);
     assert(nodes[0] instanceof Object);
+  });
+  it('节点搜索', async () => {
+    //火柴的单价是多少？
+    const nodes = await sdk.searchNode(
+      '商品0', //节点类型
+      [
+        {
+          index: 'proName', //属性的坐标或属性的名称
+          value: ['火柴'], // 属性的值
+          op: 'and', // 逻辑操作符
+        },
+      ],
+      // {
+      //   status_index: [0, 1, 2], //状态坐标 or
+      //   status_owner: ['BB5219CFB10011EEAB2D043F72FDCAE0'], // 状态拥有者
+      //   status_user: {
+      //     //状态参与者
+      //     op: 'or',
+      //     ad: ['BB5219CFB10011EEAB2D043F72FDCAE0', 'BB5219CFB10011EEAB2D043F72FDCAE0'],
+      //   },
+      //   status_start_time: { begin: Date.now(), end: Date.now() }, //状态开始时间范围
+      //   status_end_time: { begin: Date.now(), end: Date.now() }, // 状态结束时间范围
+      // },
+      // {
+      //   //创建时间范围
+      //   begin: Date.now(),
+      //   end: Date.now(),
+      // },
+      // {
+      //   // 最后编辑时间范围
+      //   begin: Date.now(),
+      //   end: Date.now(),
+      // },
+      // ['BB5219CFB10011EEAB2D043F72FDCAE0', 'BB5219CFB10011EEAB2D043F72FDCAE0'], //创建者 or
+      // ['BB5219CFB10011EEAB2D043F72FDCAE0', 'BB5219CFB10011EEAB2D043F72FDCAE0'], //编辑者 or
+      // ['火柴', '啤酒'], //标题 or
+      // { op: 'and', value: ['tag1', 'tag2'] },
+    );
+    if (nodes.length === 0) {
+      throw new Error('未找到节点');
+    }
+    const price = nodes[0].getPropByName('price');
   });
   it('insert child: 对节点下新增一个节点', async () => {
     //get node
@@ -186,6 +228,8 @@ describe('node tree 节点树操作', () => {
     const child_list = [child_info];
     const newNodes = await node.insert_children(child_list); //新增节点，返回新增节点对象列表
   });
+});
+describe('node tree 节点树操作', () => {
   it('move to: 移动节点', async () => {
     const node = (await sdk.getNodes([spctestNodeId]))[0];
     // const r = await node.move_to(sdk._special_node.root_id);

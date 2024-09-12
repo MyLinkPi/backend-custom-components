@@ -13,7 +13,7 @@ switch (process.argv[2]) {
     index = require('./dist/index');
 }
 
-const org_id = process.argv[2] === 'demo' ? env.TEST_ORG : env.TEST_ORG;
+const org_id = process.argv[2] === 'demo' ? env.DEMO_ORG: env.TEST_ORG;
 if (!org_id) {
   console.error('请填写测试空间id:  TEST_ORG in env.js');
   process.exit(1);

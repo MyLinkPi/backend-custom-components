@@ -40,7 +40,9 @@ async function main() {
                 try {
                   await captchaLogin(phone, captcha);
                   break main;
-                } catch (e) {}
+                } catch (e) {
+                    console.error(`[ERROR] ${e.message}\n`);
+                }
               } else {
                 console.error(en ? '[ERROR] wrong SMS code\n' : '[ERROR] 错误的验证码\n');
               }
