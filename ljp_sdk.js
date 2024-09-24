@@ -31,8 +31,20 @@ class LJPNode {
     return this._data.n;
   }
 
+  get create_time() {
+    return this._data.h;
+  }
+
+  get creator() {
+    return this._data.i;
+  }
+
   get title() {
     return this._data.t;
+  }
+
+  get temp_name() {
+    return this._sdk.getTempNameById(this.temp_id);
   }
 
   get temp_id() {
@@ -79,6 +91,10 @@ class LJPNode {
         { tag: this._data.e._sys_cascade[i], id: p };
     }
     return p;
+  }
+
+  get status_name() {
+    return this._sdk.getStatusNameByIndex(this.temp_id, this.status_index);
   }
 
   get status_index() {
@@ -239,6 +255,7 @@ class LJPNode {
         const node = {
           node_id: new_node_id,
           title: child.title,
+          content: child.content,
           prop: {
             ...sys_prop,
             _sys_temp: [temp_info.temp_id, prop],
@@ -281,6 +298,10 @@ class LJPNode {
 
   get_url() {
     return `${env.LJP_URL_PREFIX}${env.LJP_URL_PREFIX.endsWith('/') ? '' : '/'}home/${this.org_id}/${this._sdk._special_node.root_id}/${this.node_id}`;
+  }
+
+  async insert_doc(text) {
+    return false;
   }
 }
 
@@ -472,8 +493,16 @@ class SDK {
     return this._temp_map[temp_id].prop.findIndex((n) => n?.name === name);
   }
 
+  getStatusNameByIndex(temp_id, index) {
+    return this._temp_map[temp_id].task_status[index]?.name ?? '未知状态';
+  }
+
   getStatusIndexByName(temp_id, name) {
     return this._temp_map[temp_id].task_status.findIndex((n) => n?.name === name);
+  }
+
+  getTempNameById(temp_id) {
+    return this._temp_map[temp_id].name;
   }
 
   getTempIdByName(name) {

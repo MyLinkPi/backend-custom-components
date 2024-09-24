@@ -100,6 +100,8 @@ export type NODE_DATA = {
     _sys_attach?: { [key: PROP_INDEX]: Array<string> };
     _sys_cascade?: { [key: PROP_INDEX]: Array<string> };
   };
+  i: ACCOUNT_ID;
+  h: number;
 };
 
 export type MESSAGE = string | Delta;
@@ -108,11 +110,15 @@ export interface NODE {
   constructor(sdk: LJP_SDK, node_data: NODE_DATA): any;
   get org_id(): ORG_ID;
   get node_id(): NODE_ID;
+  get create_time(): number;
+  get creator(): ACCOUNT_ID;
   get title(): string;
   get prop(): Array<PROP>;
+  get temp_name(): TEMP_NAME;
   get temp_id(): TEMP_ID;
   getPropByName(name: PROP_NAME): PROP;
   get status_prop(): TEMP_STATUS_PROP;
+  get status_name(): STATUS_NAME;
   get status_index(): STATUS_INDEX;
   set_title(title: string): Promise<boolean>;
   set_prop(index: Array<PROP_INDEX | PROP_NAME>, value: Array<PROP>): Promise<boolean>;
@@ -128,6 +134,7 @@ export interface NODE {
       prop: Array<PROP> | { [key: PROP_NAME]: PROP };
       status_prop: TEMP_STATUS_PROP;
       status_index: STATUS_INDEX | STATUS_NAME;
+      content: string | undefined;
     }>,
     sibling_id: NODE_ID | null,
   ): Promise<Array<NODE>>;
@@ -135,6 +142,7 @@ export interface NODE {
   getStatusIndexByName(name: STATUS_NAME): STATUS_INDEX;
   send_message(message: MESSAGE, no_auto?: boolean): Promise<boolean>;
   get_url(): string;
+  insert_doc(text: string): Promise<boolean>;
 }
 
 export type TEMP_MAP = { [key: TEMP_NAME | TEMP_ID]: TEMP_INFO };
@@ -187,7 +195,9 @@ export interface LJP_SDK {
   ): Promise<Array<NODE>>;
   getNicknameMap(): Promise<NICKNAME_MAP>;
   getPropIndexByName(temp_id: TEMP_ID, name: PROP_NAME): PROP_INDEX;
+  getStatusNameByIndex(temp_id: TEMP_ID | TEMP_NAME, index: STATUS_INDEX): STATUS_NAME;
   getStatusIndexByName(temp_id: TEMP_ID, name: STATUS_NAME): STATUS_INDEX;
+  getTempNameById(temp_id: TEMP_ID): TEMP_NAME;
   getTempIdByName(name: TEMP_NAME): TEMP_ID;
   updateVersion(): Promise<boolean>;
 
