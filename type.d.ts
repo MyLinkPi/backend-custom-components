@@ -224,4 +224,5 @@ export interface LJP_SDK {
 
   getTableInnerName(db_name: string, table_name: string): Promise<string | null>;
   dbQuery(db_name: string, query: string): Promise<Array<any> | null>;
+  waitIndexSync(t: number): Promise<boolean>;
 }

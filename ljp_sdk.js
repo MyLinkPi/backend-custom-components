@@ -592,6 +592,10 @@ class SDK {
       throw new Error(ret.data?.message ?? '未知错误');
     });
   }
+
+  async waitIndexSync(t) {
+    return true;
+  }
 }
 
 module.exports = SDK;
