@@ -80,7 +80,9 @@ class LJPNode {
      * @type {PROP}
      */
     let p = this._data.e._sys_temp[1][i];
-    if (this._data.e._sys_attach?.[i]) {
+    if (this._data.e._sys_location?.[i]) {
+      p = this._data.e._sys_location[i];
+    } else if (this._data.e._sys_attach?.[i]) {
       p =
         /**
          * @type {FILE_PROP}
