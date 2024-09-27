@@ -1,6 +1,6 @@
 const readline = require('readline-sync');
 const SDK = require('./ljp_sdk');
-const { COMPONENT_ORG_ID } = require('./env');
+const { COMPONENT_ORG_ID, COMPONENT_NAME } = require('./env');
 const fs = require('node:fs');
 const path = require('node:path');
 const { askQuestion } = require('./test_mocha/t4');
@@ -15,8 +15,8 @@ sdk
   .init()
   .then(async () => {
     // console.log('请输入组件名称:');
-    const 组件名称 = await askQuestion('请输入组件名称:');
-    console.log(`input is ${组件名称}`);
+    const 组件名称 = COMPONENT_NAME ?? (await askQuestion('请输入组件名称:'));
+    console.log(`component name is ${组件名称}`);
     const ret = await (
       await sdk.getRootNode()
     ).insert_children(

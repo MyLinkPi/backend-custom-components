@@ -6,4 +6,5 @@ module.exports = {
   DEMO_ORG: 'D3B7F181D7B5267DA56062643B0A84AE', //公用测试空间id
   LOGIN_FILE: path.join(__dirname, '.login'),
   COMPONENT_ORG_ID: 'B76C8DA4F601AD9B46A62CF2D0E88892',
+  COMPONENT_NAME: null, // 组件名称，等于null时每次询问
 };
