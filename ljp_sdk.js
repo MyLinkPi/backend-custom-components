@@ -59,6 +59,9 @@ class LJPNode {
       if (this._data.e._sys_cascade?.[i]) {
         return { tag: this._data.e._sys_cascade[i], id: p };
       }
+      if (this._data.e._sys_location?.[i]) {
+        return this._data.e._sys_location[i];
+      }
       return p;
     });
   }
@@ -127,7 +130,14 @@ class LJPNode {
       value: v,
     };
     for (let i = 0; i < value.length; i++) {
-      if (value[i]?.url) {
+      if (Array.isArray(value[i]) && typeof value[i][0]?.lat === 'number') {
+        v.push(value[i].map((n) => n?.name ?? '未知地点'));
+        if (body.location) {
+          body.location[index_list[i]] = value[i];
+        } else {
+          body.location = { [index_list[i]]: value[i] };
+        }
+      } else if (value[i]?.url) {
         v.push(value[i]?.name);
         if (body.attachment) {
           body.attachment[index_list[i]] = value[i]?.url;
@@ -145,7 +155,7 @@ class LJPNode {
         v.push(value[i]);
       }
     }
-    return ljp_req('/docapi/updateProp', body).then((ret) => ret?.data?.status === 'ok');
+    return ljp_req('`/docapi/updateProp`', body).then((ret) => ret?.data?.status === 'ok');
   }
 
   set_status_index(index, prop) {

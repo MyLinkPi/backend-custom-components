@@ -81,7 +81,22 @@ export type PROP =
   | Array<NUMBER_PROP>
   | FILE_PROP
   | CASCADE_PROP
+  | Array<LOCATION_DATA>
   | null;
+
+export type LOCATION_DATA = {
+  name: string;
+  street: string;
+  distCode: string;
+  cityCode: string;
+  provCode: string;
+  add: string;
+  prov: string;
+  city: string;
+  dist: string;
+  lat: number;
+  lng: number;
+};
 
 export type NODE_DATA = {
   o: ORG_ID;
@@ -99,6 +114,7 @@ export type NODE_DATA = {
     };
     _sys_attach?: { [key: PROP_INDEX]: Array<string> };
     _sys_cascade?: { [key: PROP_INDEX]: Array<string> };
+    _sys_location?: { [key: PROP_INDEX]: Array<LOCATION_DATA> };
   };
   i: ACCOUNT_ID;
   h: number;
