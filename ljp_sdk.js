@@ -157,7 +157,7 @@ class LJPNode {
         v.push(value[i]);
       }
     }
-    return ljp_req('`/docapi/updateProp`', body).then((ret) => ret?.data?.status === 'ok');
+    return ljp_req('/docapi/updateProp', body).then((ret) => ret?.data?.status === 'ok');
   }
 
   set_status_index(index, prop) {
