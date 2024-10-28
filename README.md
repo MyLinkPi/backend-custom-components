@@ -361,7 +361,7 @@ node.set_prop('属性名称', '新的值');
 n
 ```    
 
-#### 2.4 节点状态
+#### 2.4 节点状态_1 （可配置、转换状态信息功能）
 
 ![img_2.png](doc/img/img_2.png)
 主题类型可配置节点的可选状态，状态可以是一个名称标记，也可以包含丰富的信息：（包含状态负责人、参与人、开始时间、结束时间、备注 五个字段）\
@@ -378,6 +378,55 @@ const status_prop = ['负责人id', ['参与人id', '参与人id'], Date.now(), 
 const r = await node.set_status_index('状态名称或 坐标数字', status_prop); // 设置节点状态 和状态信息
 assert(r === true)
 ```    
+
+##### 2.4.1 节点状态_2（节点已删除、处于草稿箱、回收站等）
+```node
+//测试这些节点id：
+ const test_node = {
+    draft: 'a2dfc211a37a4ed691978f4c210a0ab1',
+    deleted: '7aa74c58edb8411aa73d10436ca5ab38',
+    normal: '7e85287057814194b51ceb443393ab38',
+    // unknown :'7e85287057814194b51ceb443393ab38',
+    recycle: '3b7edef9832e4872be36e6170babb6b2',
+};
+const [node_draft] = await sdk.getNodes([test_node.draft]);
+console.log(node_draft.node_status.index) //: 草稿箱状态坐标, 等于NODE_STATUS.draft.index:  -2
+console.log(node_draft.node_status.which) //: 草稿箱状态名称, 等于NODE_STATUS.draft.name: 'draft/草稿箱'
+console.log(node_draft.node_status.is.draft) //: 是否处于草稿箱状态 : true
+console.log(node_draft.node_status.is.deleted) //: 是否处于删除状态 : false
+```
+场景：过滤处于正常状态的节点，不包含草稿箱、回收站、已删除等状态的节点。
+```node
+const nodes = 
+    await sdk.getChildNodes('父节点id')
+        .then(nodes => nodes.filter(node => node.node_status.is.normal));
+```
+查看预定义的类型
+```node
+const NODE_STATUS = {
+    draft: {
+        index: -2,
+        name: 'draft/草稿',
+    },
+    deleted: {
+        index: -1,
+        name: 'deleted/删除',
+    },
+    normal: {
+        index: 0,
+        name: 'normal/正常',
+    },
+    unknown: {
+        index: 1,
+        name: 'unknown',
+    },
+    recycle: {
+        index: 2,
+        name: 'recycle/回收站',
+    },
+};
+```
+
 
 #### 2.5 在节点上发送消息
 

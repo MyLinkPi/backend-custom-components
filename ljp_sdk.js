@@ -7,6 +7,28 @@ const axios = require('axios');
 const Delta = require('quill-delta');
 const env = require('./env');
 const url = require('node:url');
+const NODE_STATUS = {
+  draft: {
+    index: -2,
+    name: 'draft/草稿',
+  },
+  deleted: {
+    index: -1,
+    name: 'deleted/删除',
+  },
+  normal: {
+    index: 0,
+    name: 'normal/正常',
+  },
+  unknown: {
+    index: 1,
+    name: 'unknown',
+  },
+  recycle: {
+    index: 2,
+    name: 'recycle/回收站',
+  },
+};
 
 /**
  * @class LJPNode
@@ -108,6 +130,28 @@ class LJPNode {
 
   get status_prop() {
     return this._data.e._sys_task_status?.prop;
+  }
+
+  /**
+   *
+   * @type {{readonly which: (string), index: *, is: {normal: boolean, deleted: boolean, draft: boolean, recycle: boolean}}}
+   */
+  get node_status() {
+    let f = this._data.f;
+    return {
+      index: f,
+      is: {
+        draft: f === NODE_STATUS.draft.index,
+        deleted: f === NODE_STATUS.deleted.index,
+        normal: f === NODE_STATUS.normal.index,
+        unknown: f === NODE_STATUS.unknown.index,
+        recycle: f === NODE_STATUS.recycle.index,
+      },
+      get which() {
+        const status_key = Object.keys(NODE_STATUS).find((key) => NODE_STATUS[key].index === f);
+        return NODE_STATUS[status_key].name;
+      },
+    };
   }
 
   set_title(title) {
@@ -611,3 +655,5 @@ class SDK {
 }
 
 module.exports = SDK;
+module.exports.NODE_STATUS = NODE_STATUS
+

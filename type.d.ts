@@ -61,6 +61,37 @@ export type PROP_NAME = string;
 export type STATUS_NAME = string;
 export type PROP_INDEX = number;
 export type STATUS_INDEX = number;
+/**
+ *   get node_status() {
+ *     let f = this._data.f;
+ *     return {
+ *       index: f,
+ *       is: {
+ *         draft: f === NODE_STATUS.draft.index,
+ *         deleted: f === NODE_STATUS.deleted.index,
+ *         normal: f === NODE_STATUS.normal.index,
+ *         unknown: f === NODE_STATUS.unknown.index,
+ *         recycle: f === NODE_STATUS.recycle.index,
+ *       },
+ *       get which() {
+ *         const status_key = Object.keys(NODE_STATUS).find((key) => NODE_STATUS[key].index === f);
+ *         return NODE_STATUS[status_key].name;
+ *       },
+ *     };
+ *   }
+ */
+export type NODE_STATUS = {
+  index: number;
+  is: {
+    draft: boolean;
+    deleted: boolean;
+    normal: boolean;
+    unknown: boolean;
+    recycle: boolean;
+  };
+  which: string;
+};
+
 export type STRING_PROP = string;
 export type NUMBER_PROP = number;
 export type FILE_PROP = { url: Array<string>; name: Array<string> };
@@ -136,6 +167,7 @@ export interface NODE {
   get status_prop(): TEMP_STATUS_PROP;
   get status_name(): STATUS_NAME;
   get status_index(): STATUS_INDEX;
+  get node_status(): NODE_STATUS;
   set_title(title: string): Promise<boolean>;
   set_prop(index: Array<PROP_INDEX | PROP_NAME>, value: Array<PROP>): Promise<boolean>;
   set_status_index(index: STATUS_INDEX | STATUS_NAME, prop: TEMP_STATUS_PROP): Promise<boolean>;
