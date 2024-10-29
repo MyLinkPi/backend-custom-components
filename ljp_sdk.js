@@ -482,7 +482,8 @@ class SDK {
       if (Array.isArray(status.status_index) && status.status_index.length) {
         tempProps.push(
           status.status_index.map(
-            (index) => `si-${typeof index === 'string' ? this.getStatusIndexByName(index) : index}`,
+            (index) =>
+              `si-${typeof index === 'string' ? this.getStatusIndexByName(temp_id, index) : index}`,
           ),
         );
       }
@@ -655,5 +656,4 @@ class SDK {
 }
 
 module.exports = SDK;
-module.exports.NODE_STATUS = NODE_STATUS
-
+module.exports.NODE_STATUS = NODE_STATUS;
