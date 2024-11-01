@@ -1,8 +1,4 @@
-const TaskPool = require('@mylinkpi/task_pool');
-const Decimal = require('decimal.js');
 let logNode;
-const test = true;
-
 /**
  * 示例
  * @param ljp_sdk {LJP_SDK}

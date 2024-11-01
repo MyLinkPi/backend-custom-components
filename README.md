@@ -13,9 +13,11 @@
     - [2. 节点数据操作](#2-节点数据操作)
         - [2.0 示例：](#20-示例)
         - [2.1 获取节点](#21-获取节点)
+        - [2.1.1 节点基础信息（父子关系、创建时间编辑者等等）](#211-节点基础信息父子关系创建时间编辑者等等)
         - [2.2 获取节点属性](#22-获取节点属性)
         - [2.3 设置节点属性值](#23-设置节点属性值)
         - [2.4 节点状态](#24-节点状态)
+        - [2.4.1 节点状态_2（节点已删除、处于草稿箱、回收站等）](#241-节点状态_2节点已删除处于草稿箱回收站等)
         - [2.5 在节点上发送消息](#25-在节点上发送消息)
     - [3. 空间特殊操作](#3-空间特殊操作)
         - [3.1 获取空间根节点](#31-获取空间根节点)
@@ -334,10 +336,72 @@ const newNodes = await node.insert_children(child_list); //批量新增节点，
 
 通过节点ID或主题类型名称获取节点对象列表。
 
-```javascript
+```node
 const nodes = await ljp_sdk.getNodes(['节点ID']);
 const nodes = await ljp_sdk.getTempNode('主题类型名称/主题类型id');  
-```    
+```
+#### 2.1.1 节点基础信息（父子关系、创建时间编辑者等等）
+```node
+/**
+ * 示例 doc/example/get_node_check_nodeinfo.js
+ * @param ljp_sdk {LJP_SDK}
+ * @param task {Task}
+ * @returns {Promise<void>}
+ */
+async function demo(ljp_sdk, task) {
+  const temp_node = await ljp_sdk.getTempNode('测试主题');
+  for (const node of temp_node) {
+    console.log(node.node_status.index, node.node_status.which, node.node_status.is.normal);
+    console.log('空间id：', node.org_id);
+    console.log('节点id', node.node_id);
+    console.log('创建时间戳', node.create_time);
+    console.log('创建人id', node.creator);
+    console.log('更新时间戳', node.update_time);
+    console.log('更新人id', node.modifier);
+    console.log('节点标题', node.title);
+    console.log('节点类型名称', node.temp_name);
+    console.log('节点类型id', node.temp_id);
+    console.log('节点状态名称', node.status_name);
+    console.log('节点状态坐标值', node.status_index);
+    console.log('节点的父节点id', node.parent);
+    console.log('第一个子节点id', node.first_child);
+    console.log('最后一个子节点id', node.last_child);
+    console.log('上一个相邻节点（哥哥节点）id', node.elder_brother);
+    console.log('下一个相邻节点（弟弟节点）id', node.little_brother);
+    console.log('节点版本号', node.version);
+  }
+}
+module.exports = demo;
+```
+输出：
+```shell
+npm run test_demo
+> backend-custom-components@1.0.0 test_demo E:\WebstormProjects\test\backend-custom-components
+> node test.js demo
+
+0 normal/正常 true
+空间id： D3B7F181D7B5267DA56062643B0A84AE
+节点id 243b2b5c67e244d792c997cea866a614
+创建时间戳 1723711389539
+创建人id E9CD6BFEEE7C11EA8AFF7085C2D76860
+更新时间戳 1724206342297
+更新人id E9CD6BFEEE7C11EA8AFF7085C2D76860
+节点标题 test
+节点类型名称 测试主题
+节点类型id 3DF181905AD511EF8E691070FD936D58
+节点状态名称 点一下右边+1
+节点状态坐标值 0
+节点的父节点id f2ce55635c29260b15c7fd5fab0e100d
+第一个子节点id null
+最后一个子节点id null
+上一个相邻节点（哥哥节点）id 50ff312534e69d3f8e4b110fee501372
+下一个相邻节点（弟弟节点）id 26e7a0f6d9dc4010a93ff5f8fd5d9a61
+节点版本号 290
+test ok
+
+进程已结束，退出代码为 0
+```
+
 
 #### 2.2 获取节点属性
 

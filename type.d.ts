@@ -159,6 +159,8 @@ export interface NODE {
   get node_id(): NODE_ID;
   get create_time(): number;
   get creator(): ACCOUNT_ID;
+  get update_time(): number;
+  get modifier (): ACCOUNT_ID;
   get title(): string;
   get prop(): Array<PROP>;
   get temp_name(): TEMP_NAME;
@@ -168,6 +170,12 @@ export interface NODE {
   get status_name(): STATUS_NAME;
   get status_index(): STATUS_INDEX;
   get node_status(): NODE_STATUS;
+  get parent(): NODE_ID;
+  get first_child(): NODE_ID;
+  get last_child(): NODE_ID;
+  get elder_brother(): NODE_ID;
+  get little_brother(): NODE_ID;
+  get version(): number;
   set_title(title: string): Promise<boolean>;
   set_prop(index: Array<PROP_INDEX | PROP_NAME>, value: Array<PROP>): Promise<boolean>;
   set_status_index(index: STATUS_INDEX | STATUS_NAME, prop: TEMP_STATUS_PROP): Promise<boolean>;

@@ -61,6 +61,14 @@ class LJPNode {
     return this._data.i;
   }
 
+  get modifier() {
+    return this._data.d;
+  }
+
+  get update_time() {
+    return this._data.m;
+  }
+
   get title() {
     return this._data.t;
   }
@@ -152,6 +160,32 @@ class LJPNode {
         return NODE_STATUS[status_key].name;
       },
     };
+  }
+
+  get parent() {
+    return this._data.p;
+  }
+
+  get first_child() {
+    return this._data.c;
+  }
+
+  get last_child() {
+    return this._data.s;
+  }
+
+  get elder_brother() {
+    //哥哥
+    return this._data.x;
+  }
+
+  get little_brother() {
+    //弟弟
+    return this._data.j;
+  }
+
+  get version() {
+    return this._data.v;
   }
 
   set_title(title) {
