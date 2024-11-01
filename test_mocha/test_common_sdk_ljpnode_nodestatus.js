@@ -3,7 +3,6 @@ const SDK = require('./../ljp_sdk');
 const NODE_STATUS = require('./../ljp_sdk').NODE_STATUS;
 const org_id = 'BB5219CFB10011EEAB2D043F72FDCAE0'; // spc
 let sdk = new SDK(org_id);
-let spcAd = 'BB5219CFB10011EEAB2D043F72FDCAE0';
 let expect;
 before(async function () {
   const chai = await import('chai');
