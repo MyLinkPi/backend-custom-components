@@ -464,6 +464,11 @@ class SDK {
     return (await this.getNodes([this._special_node.root_id]))[0];
   }
 
+  async insertNode(children) {
+    if (!this._special_node) await this._update_special_node();
+    return (await this.getNodes([this._special_node.to_sort]))[0].insert_children(children, null);
+  }
+
   async getTempNode(temp_id) {
     if (!this._temp_map) await this._update_temp_map();
     if (!(temp_id in this._temp_map)) throw new Error(`找不到主题类型: ${temp_id}`);

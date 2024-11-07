@@ -153,6 +153,15 @@ export type NODE_DATA = {
 
 export type MESSAGE = string | Delta;
 
+export type INSERT_CHILDREN = Array<{
+  title: string;
+  temp_id: TEMP_ID | TEMP_NAME;
+  prop: Array<PROP> | { [key: PROP_NAME]: PROP };
+  status_prop: TEMP_STATUS_PROP;
+  status_index: STATUS_INDEX | STATUS_NAME;
+  content: string | undefined;
+}>;
+
 export interface NODE {
   constructor(sdk: LJP_SDK, node_data: NODE_DATA): any;
   get org_id(): ORG_ID;
@@ -160,7 +169,7 @@ export interface NODE {
   get create_time(): number;
   get creator(): ACCOUNT_ID;
   get update_time(): number;
-  get modifier (): ACCOUNT_ID;
+  get modifier(): ACCOUNT_ID;
   get title(): string;
   get prop(): Array<PROP>;
   get temp_name(): TEMP_NAME;
@@ -183,17 +192,7 @@ export interface NODE {
   move_to(parent_id: NODE_ID, sibling_id: NODE_ID | null): Promise<boolean>;
   children(): Promise<Array<NODE>>;
   del(recycle: boolean): Promise<boolean>;
-  insert_children(
-    children: Array<{
-      title: string;
-      temp_id: TEMP_ID | TEMP_NAME;
-      prop: Array<PROP> | { [key: PROP_NAME]: PROP };
-      status_prop: TEMP_STATUS_PROP;
-      status_index: STATUS_INDEX | STATUS_NAME;
-      content: string | undefined;
-    }>,
-    sibling_id: NODE_ID | null,
-  ): Promise<Array<NODE>>;
+  insert_children(children: INSERT_CHILDREN, sibling_id: NODE_ID | null): Promise<Array<NODE>>;
   getPropIndexByName(name: PROP_NAME): PROP_INDEX;
   getStatusIndexByName(name: STATUS_NAME): STATUS_INDEX;
   send_message(message: MESSAGE, no_auto?: boolean): Promise<boolean>;
@@ -219,6 +218,7 @@ export type NICKNAME_MAP = { [key: ACCOUNT_ID | NICKNAME]: NICKNAME | ACCOUNT_ID
  */
 export interface LJP_SDK {
   init(): Promise<boolean>;
+  insertNode(children: INSERT_CHILDREN): Promise<Array<NODE>>;
   getRootNode(): Promise<NODE>;
   getNodes(node_id_list: Array<NODE_ID>): Promise<Array<NODE>>;
   getTempNode(temp_id: TEMP_ID | TEMP_NAME): Promise<Array<NODE>>;
