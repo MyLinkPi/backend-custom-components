@@ -290,10 +290,10 @@ class LJPNode {
   }
 
   _split_prop(prop) {
-    if (Array.isArray(prop.url)) {
+    if (Array.isArray(prop?.url)) {
       return { prop: prop.name, sys_prop: { _sys_attach: prop.url } };
     }
-    if (Array.isArray(prop.id)) {
+    if (Array.isArray(prop?.id)) {
       return { prop: prop.id, sys_prop: { _sys_cascade: prop.tag } };
     }
     return { prop, sys_prop: {} };
