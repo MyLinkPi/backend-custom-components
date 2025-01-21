@@ -6,7 +6,8 @@ const OSS = require('ali-oss');
 const axios = require('axios');
 const Delta = require('quill-delta');
 const env = require('./env');
-const url = require('node:url');
+const ExcelJS = require('exceljs');
+
 const NODE_STATUS = {
   draft: {
     index: -2,
@@ -657,6 +658,7 @@ class SDK {
     const config = {};
     if ('timeout' in req) config.timeout = req.timeout;
     if ('headers' in req) config.headers = req.headers;
+    if ('responseType' in req) config.responseType = req.responseType;
     switch (req.method.toLowerCase()) {
       case 'get':
         return axios.get(req.uri, config).then((d) => d.data);
@@ -691,6 +693,24 @@ class SDK {
 
   async waitIndexSync(t) {
     return true;
+  }
+
+  async getExcelToArray(url) {
+    let mainSheet = null;
+    const data = await this.request({ method: 'get', uri: url, responseType: 'arraybuffer' });
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(data);
+    workbook.eachSheet((worksheet, sheetIndex) => {
+      if (!!worksheet && !mainSheet) {
+        mainSheet = worksheet;
+      }
+    });
+    const sheet = [];
+    mainSheet.eachRow((row) => {
+      sheet.push(row.values);
+    });
+    console.log(sheet);
+    return sheet;
   }
 }
 
