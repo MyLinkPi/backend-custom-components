@@ -251,6 +251,7 @@ class LJPNode {
       startTime: prop[2] ?? null,
       endTime: prop[3] ?? null,
       statusCommit: prop[4] ?? null,
+      force: true,
     };
     return ljp_req('/docapi/setAction', body).then((ret) => ret?.data?.status === 'ok');
   }
