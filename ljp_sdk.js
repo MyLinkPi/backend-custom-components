@@ -1,3 +1,4 @@
+const JSONBig = require('json-bigint');
 const { ljp_req, checkLogin } = require('./request');
 const { generateId, md5, IsTempId } = require('./util');
 const fs = require('node:fs');
@@ -657,6 +658,17 @@ class SDK {
 
   request(req) {
     const config = {};
+    if (req.resUseBigInt) {
+      config.transformResponse = [
+        (data, headers) => {
+          if (headers['content-type']?.includes('json')) {
+            console.log('use JSONBig');
+            return JSONBig.parse(data);
+          }
+          return data;
+        },
+      ];
+    }
     if ('timeout' in req) config.timeout = req.timeout;
     if ('headers' in req) config.headers = req.headers;
     if ('responseType' in req) config.responseType = req.responseType;

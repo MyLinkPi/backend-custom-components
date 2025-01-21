@@ -276,6 +276,8 @@ export interface LJP_SDK {
     timeout: number;
     body: any;
     headers: { [key: string]: string };
+    resUseBigInt: boolean | undefined;
+    responseType: 'arraybuffer' | 'document' | 'json' | 'text' | 'stream' | undefined;
   }): any;
 
   getTableInnerName(db_name: string, table_name: string): Promise<string | null>;
