@@ -393,6 +393,14 @@ class LJPNode {
     return `${env.LJP_URL_PREFIX}${env.LJP_URL_PREFIX.endsWith('/') ? '' : '/'}home/${this.org_id}/${this._sdk._special_node.root_id}/${this.node_id}`;
   }
 
+  async get_callback_url(prop_name, key_length = 32) {
+    const prop_index =
+      typeof prop_name === 'string' ? this.getPropIndexByName(prop_name) : prop_name;
+    const key = generateId(key_length);
+    await this.set_sys_prop([`_sys_cb_key_${prop_index}`], [key]);
+    return `${env.LJP_URL_PREFIX}${env.LJP_URL_PREFIX.endsWith('/') ? '' : '/'}docapi/callback?o=${this.org_id}&n=${this.node_id}&p=${prop_index}&k=${key}`;
+  }
+
   async insert_doc(text) {
     return false;
   }

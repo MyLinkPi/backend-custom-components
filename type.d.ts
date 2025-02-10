@@ -197,6 +197,7 @@ export interface NODE {
   getStatusIndexByName(name: STATUS_NAME): STATUS_INDEX;
   send_message(message: MESSAGE, no_auto?: boolean): Promise<boolean>;
   get_url(): string;
+  get_callback_url(prop_name: PROP_NAME | PROP_INDEX, key_length: number): Promise<string>;
   insert_doc(text: string): Promise<boolean>;
 }
 
