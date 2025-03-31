@@ -1,6 +1,6 @@
 const readline = require('readline-sync');
 const SDK = require('./ljp_sdk');
-const { COMPONENT_ORG_ID, COMPONENT_NAME } = require('./env');
+const { COMPONENT_ORG_ID, COMPONENT_NAME, USE_INPUT_TEMP, PARAMS } = require('./env');
 const fs = require('node:fs');
 const path = require('node:path');
 const { askQuestion } = require('./test_mocha/t4');
@@ -24,7 +24,11 @@ sdk
         {
           title: '',
           temp_id: '后端组件',
-          prop: { 组件名称, 是否公开: '否' },
+          prop: {
+            组件名称,
+            是否公开: '否',
+            参数列表: USE_INPUT_TEMP ? JSON.stringify(PARAMS) : '',
+          },
           status_index: '已停用',
           status_prop: [null, [], null, null, ''],
         },
